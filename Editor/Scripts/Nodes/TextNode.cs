@@ -8,8 +8,8 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
     [Serializable]
     public class TextNode : MasterNode
     {
-        [SerializeField] private string text;
-        [NonSerialized] private TextField _textField; 
+        [SerializeField] protected string text;
+        [NonSerialized] protected TextField _textField; 
         public TextNode()
         {
             title = "Text";

@@ -30,7 +30,7 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
         }
         private void OnEnable()
         {
-
+            
         }
 
         [OnOpenAsset()]

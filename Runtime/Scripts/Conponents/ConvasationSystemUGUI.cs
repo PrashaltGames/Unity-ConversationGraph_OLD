@@ -1,38 +1,40 @@
 using Prashalt.Unity.ConvasationGraph;
 using UnityEngine;
 using TMPro;
-using System;
+using Cysharp.Threading.Tasks;
 
-public class ConvasationSystemUGUI : MonoBehaviour
+[RequireComponent(typeof(AudioSource))]
+public class ConvasationSystemUGUI : ConvasationSystemBase
 {
     [Header("GUI")]
     [SerializeField] private TextMeshProUGUI mainText;
     [SerializeField] private TextMeshProUGUI speaker;
-    [Header("Data")]
-    [SerializeField] private ConvasationGraphAsset convasation;
+
+
+    private AudioSource audioSource;
 
     public void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        OnTextChangeAction += OnTextChange;
         StartConvasation();
     }
-    public void StartConvasation()    
+
+    protected async UniTask OnTextChange(ConvasationData data)
     {
-        var previousNodeData = convasation.StartNode;
-        for (var i = 0; i < convasation.Nodes.Count; i++)
+        if (data.text == null || data.text == "") return;
+
+        //Update Text
+        speaker.text = data.speakerName;
+
+        mainText.maxVisibleCharacters = 0;
+        mainText.text = data.text;
+        for(var i = 1; i < mainText.text.Length; i++)
         {
-            var nodeDataList = convasation.GetNextNode(previousNodeData);
-            int nodeCount = 0;
-            foreach(var nodeData in nodeDataList)
-            {
-                var data = JsonUtility.FromJson<ConvasationData>(nodeData.json);
-                if (data.text == null || data.text == "") continue;
-
-                mainText.text = data.text;
-
-                nodeCount++;
-                previousNodeData = nodeData;
-            }
-            i += nodeCount;
+            mainText.maxVisibleCharacters = i;
+            await UniTask.Delay(100);
         }
+        await WaitClick();
+        audioSource.Play();
     }
 }

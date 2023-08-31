@@ -86,7 +86,7 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
         {
             foreach(var nodeData in asset.Nodes)
             {
-                var t = Type.GetType(nodeData.typeName + ", PrashaltConvasationGraphRuntime");
+                var t = Type.GetType(nodeData.typeName);
                 if (t is null) continue;
 
                 var instance = Activator.CreateInstance(t) as MasterNode;
