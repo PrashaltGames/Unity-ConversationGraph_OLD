@@ -13,8 +13,6 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
         public ConvasationGraphAsset ConvasationGraphAsset { set; get; }
         public PrashaltConvasationGraph convasationGraphView;
 
-
-
         public void Open(ConvasationGraphAsset convasationGraphAsset)
         {
             ConvasationGraphAsset = convasationGraphAsset;

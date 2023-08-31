@@ -29,7 +29,7 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
             new SearchTreeGroupEntry(new GUIContent("Example")) { level = 1 },
 
             // Exampleグループの下に各ノードを作るためのメニューを追加
-            new SearchTreeEntry(new GUIContent(nameof(TextNode))) { level = 2, userData = typeof(TextNode) },
+            new SearchTreeEntry(new GUIContent(nameof(NarratorNode))) { level = 2, userData = typeof(NarratorNode) },
             new SearchTreeEntry(new GUIContent(nameof(SpeakerNode))) { level = 2, userData = typeof(SpeakerNode) }
         };
 

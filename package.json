@@ -9,7 +9,7 @@
         "name": "AtsuAtsu(Prashalt Games)",
         "email": "kanpyou0120@gmail.com",
         "url": "https://github.com/AtsuAtsu0120"
-      },
+    },
     "dependencies": {
         "com.cysharp.unitask": "2.3.3"
     }
