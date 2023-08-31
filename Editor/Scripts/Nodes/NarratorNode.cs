@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -12,8 +13,10 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
         [SerializeField] protected string text;
         [NonSerialized] protected TextField _textField;
 
-        private const string elementPath = test + "Editor/UXML/NarratorNode.uxml";
-        private const string test = "Assets/PrashaltConvasationGraph/";
+        private const string packageFilePath = "Packages/com.prashalt.unity.convasationgraph/";
+        private const string elementPath = packageFilePath + "Editor/UXML/NarratorNode.uxml";
+        
+
         public NarratorNode()
         {
             title = "Narrator";
