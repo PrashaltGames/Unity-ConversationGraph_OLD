@@ -13,7 +13,7 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
         [SerializeField] private string speakerName;
         [NonSerialized] private TextField _speakerNameText;
 
-        private const string packageFilePath = "../Packages/com.prashalt.unity.convasationgraph/PATH/TO/ASSET/";
+        private const string packageFilePath = "Packages/com.prashalt.unity.convasationgraph/";
         private const string elementPath = packageFilePath + "Editor/UXML/SpeakerNode.uxml";
         public SpeakerNode() : base()
         {
