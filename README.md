@@ -1,6 +1,18 @@
 # Unity-ConversationGraph
 Node-based package for creating conversation for Unity.
-
-# Insta
-# Developer
-Develop by AtsuAtsu0120(@KaidoAtsuya)
+## Developer
+Develop by AtsuAtsu0120(X:@KaidoAtsuya)
+## Warning
+**It is experimental package.**
+# Getting started
+Install Package with UPM.
+`https://github.com/PrashaltGames/Unity-ConvasationGraph.git`
+# How to Use
+1. Make `Conversation Graph Asset` in ProjectWindow.
+2. Create your Conversation using Nodes.
+3. Use `ConversationSystemUGUI` in Runtime with your Conversation Graph Asset.
+## Custom
+You can create custom components for ConvasationGraph using `ConversationSystemBase`.
+This class provided 2 actions.
+1. `OnNodeChangeAction`
+2. `OnConversationFinishedAction`
