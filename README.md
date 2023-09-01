@@ -4,6 +4,8 @@ Node-based package for creating conversation for Unity.
 Develop by AtsuAtsu0120(X:@KaidoAtsuya)
 ## Warning
 **It is experimental package.**
+## Suppoted
+- UGUI
 # Getting started
 Install Package with UPM.
 `https://github.com/PrashaltGames/Unity-ConvasationGraph.git`
@@ -16,3 +18,7 @@ You can create custom components for ConvasationGraph using `ConversationSystemB
 This class provided 2 actions.
 1. `OnNodeChangeAction`
 2. `OnConversationFinishedAction`
+# NodeList
+- SpeakerNode : Normal node, enable to set speaker name and text.
+- NarratorNode : SpeakerNode without speaker name.
+
