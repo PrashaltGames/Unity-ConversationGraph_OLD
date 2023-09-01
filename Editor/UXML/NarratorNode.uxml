@@ -1,6 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement style="flex-grow: 1; max-width: 200px; width: 348px;">
-        <ui:Label tabindex="-1" text="Main Text" parse-escape-sequences="true" display-tooltip-when-elided="true" />
-        <ui:TextField picking-mode="Ignore" value="Hello!" name="mainTextField" multiline="true" style="white-space: normal; max-width: 200px;" />
-    </ui:VisualElement>
+    <ui:Label tabindex="-1" text="Main Text" parse-escape-sequences="true" display-tooltip-when-elided="true" style="width: 187px; max-width: 200px; margin-left: 4px;" />
+    <ui:TextField picking-mode="Ignore" value="Hello!" name="mainTextField" multiline="true" style="white-space: normal; max-width: 200px;" />
+    <ui:Button text="＋" parse-escape-sequences="true" display-tooltip-when-elided="true" name="addButton" style="margin-top: 10px; -unity-font-style: bold; font-size: 14px; max-width: none; justify-content: flex-start; align-self: center; width: 99px; max-height: 20px; border-left-color: rgba(178, 178, 178, 0); border-right-color: rgba(178, 178, 178, 0); border-top-color: rgba(178, 178, 178, 0); border-bottom-color: rgba(178, 178, 178, 0); background-color: rgb(75, 75, 75);" />
 </ui:UXML>

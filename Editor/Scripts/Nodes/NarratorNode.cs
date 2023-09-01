@@ -1,5 +1,7 @@
+using Prashalt.Unity.ConvasationGraph.Components;
+using Prashalt.Unity.ConvasationGraph.Editor;
 using System;
-using System.IO;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -10,8 +12,10 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
     [Serializable]
     public class NarratorNode : MasterNode
     {
-        [SerializeField] protected string text;
-        [NonSerialized] protected TextField _textField;
+        [SerializeField] protected List<string> textList;
+        [NonSerialized] protected List<TextField> textFieldList;
+        [NonSerialized] protected Button addTextFieldButton;
+        [NonSerialized] protected TemplateContainer defaultContainer;
 
         private const string packageFilePath = "Packages/com.prashalt.unity.convasationgraph/";
         private const string elementPath = packageFilePath + "Editor/UXML/NarratorNode.uxml";
@@ -19,6 +23,7 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
 
         public NarratorNode()
         {
+            textFieldList = new();
             title = "Narrator";
 
             // 入力用のポートを作成
@@ -32,21 +37,41 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
             outputContainer.Add(outputPort);
 
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
-            var template = visualTree.Instantiate();
-            mainContainer.Add(template);
+            defaultContainer = visualTree.Instantiate();
+            mainContainer.Add(defaultContainer);
 
-            _textField = mainContainer.Q<TextField>("mainTextField");
+            addTextFieldButton = mainContainer.Q<Button>("addButton");
+            addTextFieldButton.clicked += OnAddTextButton;
+
+            textFieldList.Add(mainContainer.Q<TextField>("mainTextField"));
+        }
+        public void OnAddTextButton()
+        {
+            var newTextField = new ConvasationTextFiled();
+
+            newTextField.Q<Label>().text = $"Main Text {textFieldList.Count + 1}";
+            textFieldList.Add(newTextField.Q<TextField>());
+
+            defaultContainer.Add(newTextField);
+            ConvasationGraphEditorUtility.MoveDown(defaultContainer, addTextFieldButton);
         }
 
         public override void Initialize(string guid, Rect rect, string json)
         {
             base.Initialize(guid, rect, json);
             var jsonObj = JsonUtility.FromJson<NarratorNode>(json);
-            _textField.SetValueWithoutNotify(jsonObj?.text);
+            if(jsonObj.textList.Count != 0)
+            {
+                textFieldList[0].SetValueWithoutNotify(jsonObj?.textList[0]);
+            }
         }
         public override string ToJson()
         {
-            text = _textField.text;
+            textList = new();
+            foreach ( var item in textFieldList )
+            {
+                textList.Add(item.text);
+            }
             return JsonUtility.ToJson(this);
         }
     }

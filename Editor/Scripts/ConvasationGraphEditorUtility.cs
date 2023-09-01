@@ -1,8 +1,10 @@
+using Codice.Utils;
 using Prashalt.Unity.ConvasationGraph;
 using Prashalt.Unity.ConvasationGraph.Nodes;
 using System;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Prashalt.Unity.ConvasationGraph.Editor
 {
@@ -27,6 +29,18 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
             var edgeData = new EdgeData("", baseNode.guid, targetNode.guid);
 
             return edgeData;
+        }
+        public static void MoveUp(VisualElement parent, VisualElement target)
+        {
+            var index = parent.IndexOf(target);
+            var next = parent.ElementAt(index - 1);
+            target.PlaceBehind(next);
+        }
+        public static void MoveDown(VisualElement parent, VisualElement target)
+        {
+            var index = parent.IndexOf(target);
+            var next = parent.ElementAt(index + 1);
+            target.PlaceInFront(next);
         }
     }
 }

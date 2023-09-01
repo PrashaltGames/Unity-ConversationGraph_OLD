@@ -10,31 +10,49 @@ public class ConvasationSystemUGUI : ConvasationSystemBase
     [SerializeField] private TextMeshProUGUI mainText;
     [SerializeField] private TextMeshProUGUI speaker;
 
+    [Header("Parameter")]
+    [SerializeField] private int textAnimationSpeed;
+
 
     private AudioSource audioSource;
 
     public void Start()
     {
         audioSource = GetComponent<AudioSource>();
-        OnTextChangeAction += OnTextChange;
+        OnNodeChangeAction += OnNodeChange;
+        OnConvasationFinishedAction += OnConvasationFinished;
         StartConvasation();
     }
 
-    protected async UniTask OnTextChange(ConvasationData data)
+    private async UniTask OnNodeChange(ConvasationData data)
     {
-        if (data.text == null || data.text == "") return;
+        if (data.textList == null || data.textList.Count == 0) return;
 
         //Update Text
         speaker.text = data.speakerName;
 
-        mainText.maxVisibleCharacters = 0;
-        mainText.text = data.text;
-        for(var i = 1; i < mainText.text.Length; i++)
+        foreach (var text in data.textList)
         {
-            mainText.maxVisibleCharacters = i;
-            await UniTask.Delay(100);
+            audioSource.Play();
+
+            mainText.maxVisibleCharacters = 0;
+            mainText.text = text;
+
+            //アニメーション
+            for (var i = 1; i <= mainText.text.Length; i++)
+            {
+                mainText.maxVisibleCharacters = i;
+                await UniTask.Delay(textAnimationSpeed);
+                //TODO クリックしてたら全部にする
+            }
+
+            audioSource.Stop();
+            await WaitClick();
         }
-        await WaitClick();
-        audioSource.Play();
+    }
+    private void OnConvasationFinished()
+    {
+        speaker.text = "";
+        mainText.text = "";
     }
 }

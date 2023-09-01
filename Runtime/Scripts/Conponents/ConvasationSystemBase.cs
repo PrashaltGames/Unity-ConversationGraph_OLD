@@ -10,7 +10,8 @@ public abstract class ConvasationSystemBase : MonoBehaviour
     [Header("Data")]
     [SerializeField] private ConvasationGraphAsset convasation;
 
-    protected Func<ConvasationData, UniTask> OnTextChangeAction;
+    protected Func<ConvasationData, UniTask> OnNodeChangeAction;
+    protected Action OnConvasationFinishedAction;
     public async void StartConvasation()
     {
         var previousNodeData = convasation.StartNode;
@@ -21,14 +22,14 @@ public abstract class ConvasationSystemBase : MonoBehaviour
             foreach (var nodeData in nodeDataList)
             {
                 var data = JsonUtility.FromJson<ConvasationData>(nodeData.json);
-
-                await OnTextChangeAction.Invoke(data);
+                await OnNodeChangeAction.Invoke(data);
 
                 nodeCount++;
                 previousNodeData = nodeData;
             }
             i += nodeCount;
         }
+        OnConvasationFinishedAction.Invoke();
     }
     
     protected async UniTask WaitClick()

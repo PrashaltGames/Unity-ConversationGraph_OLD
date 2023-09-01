@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 [Serializable]
 public struct ConvasationData
 {
     public string speakerName;
-    public string text;
+    public List<string> textList;
 }

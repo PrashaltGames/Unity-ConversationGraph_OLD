@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEditor;
 using Cysharp.Threading.Tasks;
+using Prashalt.Unity.ConvasationGraph.Editor;
 
 namespace Prashalt.Unity.ConvasationGraph.Nodes
 {
@@ -24,9 +25,7 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
             mainContainer.Add(template);
 
             _speakerNameText = mainContainer.Q<TextField>("speakerNameField");
-            var index = mainContainer.IndexOf(template);
-            var next = mainContainer.ElementAt(index - 1);
-            template.PlaceBehind(next);
+            ConvasationGraphEditorUtility.MoveUp(mainContainer, template);
 
             RefreshExpandedState();
         }
@@ -40,7 +39,7 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
         }
         public override string ToJson()
         {
-            text = _textField.text;
+            base.ToJson();
             speakerName = _speakerNameText.text;
             return JsonUtility.ToJson(this);
         }
