@@ -1,4 +1,4 @@
-using Prashalt.Unity.ConvasationGraph.Nodes;
+using Prashalt.Unity.ConversationGraph.Nodes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;

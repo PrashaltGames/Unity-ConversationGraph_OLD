@@ -1,15 +1,16 @@
 using Codice.Utils;
-using Prashalt.Unity.ConvasationGraph;
-using Prashalt.Unity.ConvasationGraph.Nodes;
+using Prashalt.Unity.ConversationGraph;
+using Prashalt.Unity.ConversationGraph.Nodes;
 using System;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Prashalt.Unity.ConvasationGraph.Editor
+namespace Prashalt.Unity.ConversationGraph.Editor
 {
-    public static class ConvasationGraphEditorUtility
+    public static class ConversationGraphEditorUtility
     {
+        public const string packageFilePath = "Packages/com.prashalt.unity.conversationgraph/";
         public static NodeData NodeToData(MasterNode node)
         {
             var guid = node.guid;

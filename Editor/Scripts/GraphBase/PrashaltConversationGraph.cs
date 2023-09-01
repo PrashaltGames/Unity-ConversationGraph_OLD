@@ -1,5 +1,5 @@
 using Cysharp.Threading.Tasks;
-using Prashalt.Unity.ConvasationGraph.Nodes;
+using Prashalt.Unity.ConversationGraph.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,13 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Prashalt.Unity.ConvasationGraph.Editor
+namespace Prashalt.Unity.ConversationGraph.Editor
 {
-    public class PrashaltConvasationGraph : GraphView
+    public class PrashaltConversationGraph : GraphView
     {
-        public PrashaltConvasationWindow _window;
+        public PrashaltConversationWindow _window;
 #region Func_UnityEditor
-        public PrashaltConvasationGraph(PrashaltConvasationWindow window)
+        public PrashaltConversationGraph(PrashaltConversationWindow window)
         {
             //ScritableObjectÇ©ÇÁí«â¡Ç∑ÇÈÅB
             _window = window;
@@ -82,7 +82,7 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
         }
         #endregion
         #region Func_Original
-        public void ShowNodesFromAsset(ConvasationGraphAsset asset)
+        public void ShowNodesFromAsset(ConversationGraphAsset asset)
         {
             foreach(var nodeData in asset.Nodes)
             {
@@ -96,7 +96,7 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
                 instance.Initialize(nodeData.guid, nodeData.rect, nodeData.json);
             }
         }
-        public async void ShowEdgeFromAsset(ConvasationGraphAsset asset)
+        public async void ShowEdgeFromAsset(ConversationGraphAsset asset)
         {
             await UniTask.Delay(10);
             foreach (var edgeData in asset.Edges)

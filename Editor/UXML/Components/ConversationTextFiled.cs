@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Prashalt.Unity.ConvasationGraph.Components
+namespace Prashalt.Unity.ConversationGraph.Components
 {
-    public class ConvasationTextFiled : VisualElement
+    public class ConversationTextFiled : VisualElement
     {
-        public new class UxmlFactory : UxmlFactory<ConvasationTextFiled> { }
+        public new class UxmlFactory : UxmlFactory<ConversationTextFiled> { }
 
-        public ConvasationTextFiled()
+        public ConversationTextFiled()
         {
 
             var label = new Label

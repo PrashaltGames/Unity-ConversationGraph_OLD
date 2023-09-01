@@ -1,5 +1,5 @@
-using Prashalt.Unity.ConvasationGraph.Components;
-using Prashalt.Unity.ConvasationGraph.Editor;
+using Prashalt.Unity.ConversationGraph.Components;
+using Prashalt.Unity.ConversationGraph.Editor;
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -7,7 +7,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Prashalt.Unity.ConvasationGraph.Nodes
+namespace Prashalt.Unity.ConversationGraph.Nodes
 {
     [Serializable]
     public class NarratorNode : MasterNode
@@ -17,8 +17,7 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
         [NonSerialized] protected Button addTextFieldButton;
         [NonSerialized] protected TemplateContainer defaultContainer;
 
-        private const string packageFilePath = "Packages/com.prashalt.unity.convasationgraph/";
-        private const string elementPath = packageFilePath + "Editor/UXML/NarratorNode.uxml";
+        private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/NarratorNode.uxml";
         
 
         public NarratorNode()
@@ -47,20 +46,20 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
         }
         public void OnAddTextButton()
         {
-            var newTextField = new ConvasationTextFiled();
+            var newTextField = new ConversationTextFiled();
 
             newTextField.Q<Label>().text = $"Main Text {textFieldList.Count + 1}";
             textFieldList.Add(newTextField.Q<TextField>());
 
             defaultContainer.Add(newTextField);
-            ConvasationGraphEditorUtility.MoveDown(defaultContainer, addTextFieldButton);
+            ConversationGraphEditorUtility.MoveDown(defaultContainer, addTextFieldButton);
         }
 
         public override void Initialize(string guid, Rect rect, string json)
         {
             base.Initialize(guid, rect, json);
             var jsonObj = JsonUtility.FromJson<NarratorNode>(json);
-            if(jsonObj.textList.Count != 0)
+            if(jsonObj?.textList.Count != 0)
             {
                 textFieldList[0].SetValueWithoutNotify(jsonObj?.textList[0]);
             }

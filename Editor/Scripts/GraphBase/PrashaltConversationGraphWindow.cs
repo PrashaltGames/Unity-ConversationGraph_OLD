@@ -6,17 +6,17 @@ using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 
-namespace Prashalt.Unity.ConvasationGraph.Editor
+namespace Prashalt.Unity.ConversationGraph.Editor
 {
-    public class PrashaltConvasationWindow : EditorWindow
+    public class PrashaltConversationWindow : EditorWindow
     {
-        public ConvasationGraphAsset ConvasationGraphAsset { set; get; }
-        public PrashaltConvasationGraph convasationGraphView;
+        public ConversationGraphAsset ConvasationGraphAsset { set; get; }
+        public PrashaltConversationGraph convasationGraphView;
 
-        public void Open(ConvasationGraphAsset convasationGraphAsset)
+        public void Open(ConversationGraphAsset convasationGraphAsset)
         {
             ConvasationGraphAsset = convasationGraphAsset;
-            var graphView = new PrashaltConvasationGraph(this);
+            var graphView = new PrashaltConversationGraph(this);
             rootVisualElement.Add(graphView);
 
             var toolvar = new Toolbar();
@@ -34,13 +34,13 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
         [OnOpenAsset()]
         public static bool OnOpenAsset(int instanceId, int _)
         {
-            if (EditorUtility.InstanceIDToObject(instanceId) is ConvasationGraphAsset)
+            if (EditorUtility.InstanceIDToObject(instanceId) is ConversationGraphAsset)
             {
-                var convasationGraphAsset = EditorUtility.InstanceIDToObject(instanceId) as ConvasationGraphAsset;
+                var convasationGraphAsset = EditorUtility.InstanceIDToObject(instanceId) as ConversationGraphAsset;
 
-                if (HasOpenInstances<PrashaltConvasationWindow>())
+                if (HasOpenInstances<PrashaltConversationWindow>())
                 {
-                    var window = GetWindow<PrashaltConvasationWindow>(convasationGraphAsset.name, typeof(SceneView));
+                    var window = GetWindow<PrashaltConversationWindow>(convasationGraphAsset.name, typeof(SceneView));
 
                     if (window.ConvasationGraphAsset == null)
                     {
@@ -65,7 +65,7 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
                 else
                 {
                     // êVãKwindowçÏê¨
-                    var window = GetWindow<PrashaltConvasationWindow>(convasationGraphAsset.name, typeof(SceneView));
+                    var window = GetWindow<PrashaltConversationWindow>(convasationGraphAsset.name, typeof(SceneView));
 
                     window.Open(convasationGraphAsset);
                     return true;
@@ -83,13 +83,13 @@ namespace Prashalt.Unity.ConvasationGraph.Editor
             foreach(var node in convasationGraphView.nodes)
             {
                 if (node is not MasterNode) continue;
-                ConvasationGraphAsset.SaveNode(ConvasationGraphEditorUtility.NodeToData(node as MasterNode));
+                ConvasationGraphAsset.SaveNode(ConversationGraphEditorUtility.NodeToData(node as MasterNode));
             }
 
             ConvasationGraphAsset.ClearEdges();
             foreach(var edge in convasationGraphView.edges)
             {
-                var edgeData = ConvasationGraphEditorUtility.EdgeToData(edge);
+                var edgeData = ConversationGraphEditorUtility.EdgeToData(edge);
                 if (edgeData is null) continue;
 
                 ConvasationGraphAsset.SaveEdge(edgeData);

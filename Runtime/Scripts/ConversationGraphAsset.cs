@@ -2,10 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Prashalt.Unity.ConvasationGraph
+namespace Prashalt.Unity.ConversationGraph
 {
     [CreateAssetMenu]
-    public class ConvasationGraphAsset : ScriptableObject
+    public class ConversationGraphAsset : ScriptableObject
     {
         [SerializeField] private List<NodeData> _nodes;
         [SerializeField] private List<EdgeData> _edges;

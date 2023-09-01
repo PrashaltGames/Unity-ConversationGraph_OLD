@@ -1,6 +1,6 @@
 using UnityEditor.Experimental.GraphView;
 
-namespace Prashalt.Unity.ConvasationGraph.Nodes
+namespace Prashalt.Unity.ConversationGraph.Nodes
 {
     public class StartNode : MasterNode
     {

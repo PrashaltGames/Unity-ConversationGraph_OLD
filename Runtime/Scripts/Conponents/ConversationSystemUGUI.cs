@@ -1,10 +1,10 @@
-using Prashalt.Unity.ConvasationGraph;
+using Prashalt.Unity.ConversationGraph;
 using UnityEngine;
 using TMPro;
 using Cysharp.Threading.Tasks;
 
 [RequireComponent(typeof(AudioSource))]
-public class ConvasationSystemUGUI : ConvasationSystemBase
+public class ConversationSystemUGUI : ConversationSystemBase
 {
     [Header("GUI")]
     [SerializeField] private TextMeshProUGUI mainText;
@@ -20,11 +20,11 @@ public class ConvasationSystemUGUI : ConvasationSystemBase
     {
         audioSource = GetComponent<AudioSource>();
         OnNodeChangeAction += OnNodeChange;
-        OnConvasationFinishedAction += OnConvasationFinished;
-        StartConvasation();
+        OnConversationFinishedAction += OnConvasationFinished;
+        StartConversation();
     }
 
-    private async UniTask OnNodeChange(ConvasationData data)
+    private async UniTask OnNodeChange(ConversationData data)
     {
         if (data.textList == null || data.textList.Count == 0) return;
 
@@ -46,8 +46,8 @@ public class ConvasationSystemUGUI : ConvasationSystemBase
                 //TODO クリックしてたら全部にする
             }
 
-            audioSource.Stop();
             await WaitClick();
+            audioSource.Stop();
         }
     }
     private void OnConvasationFinished()

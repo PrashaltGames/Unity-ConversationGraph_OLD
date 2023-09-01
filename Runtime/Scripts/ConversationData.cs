@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public struct ConvasationData
+public struct ConversationData
 {
     public string speakerName;
     public List<string> textList;

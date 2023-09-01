@@ -2,7 +2,7 @@ using System;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-namespace Prashalt.Unity.ConvasationGraph.Nodes
+namespace Prashalt.Unity.ConversationGraph.Nodes
 {
     [Serializable]
     public class EndNode : MasterNode

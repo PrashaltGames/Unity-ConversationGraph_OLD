@@ -4,9 +4,9 @@ using UnityEngine;
 using System;
 using UnityEditor;
 using Cysharp.Threading.Tasks;
-using Prashalt.Unity.ConvasationGraph.Editor;
+using Prashalt.Unity.ConversationGraph.Editor;
 
-namespace Prashalt.Unity.ConvasationGraph.Nodes
+namespace Prashalt.Unity.ConversationGraph.Nodes
 {
     [Serializable]
     public class SpeakerNode : NarratorNode
@@ -14,8 +14,7 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
         [SerializeField] private string speakerName;
         [NonSerialized] private TextField _speakerNameText;
 
-        private const string packageFilePath = "Packages/com.prashalt.unity.convasationgraph/";
-        private const string elementPath = packageFilePath + "Editor/UXML/SpeakerNode.uxml";
+        private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/SpeakerNode.uxml";
         public SpeakerNode() : base()
         {
             title = "Speaker";
@@ -25,7 +24,7 @@ namespace Prashalt.Unity.ConvasationGraph.Nodes
             mainContainer.Add(template);
 
             _speakerNameText = mainContainer.Q<TextField>("speakerNameField");
-            ConvasationGraphEditorUtility.MoveUp(mainContainer, template);
+            ConversationGraphEditorUtility.MoveUp(mainContainer, template);
 
             RefreshExpandedState();
         }

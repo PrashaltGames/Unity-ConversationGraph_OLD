@@ -4,16 +4,16 @@ using UnityEditor;
 using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
-using Prashalt.Unity.ConvasationGraph.Nodes;
+using Prashalt.Unity.ConversationGraph.Nodes;
 
-namespace Prashalt.Unity.ConvasationGraph.Editor 
+namespace Prashalt.Unity.ConversationGraph.Editor 
 {
     public class PrashaltSearchMenuWindowProvider : ScriptableObject, ISearchWindowProvider
     {
-        private PrashaltConvasationGraph _graphView;
+        private PrashaltConversationGraph _graphView;
         private EditorWindow _editorWindow;
 
-        public void Initialize(PrashaltConvasationGraph graphView, EditorWindow editorWindow)
+        public void Initialize(PrashaltConversationGraph graphView, EditorWindow editorWindow)
         {
             _graphView = graphView;
             _editorWindow = editorWindow;
