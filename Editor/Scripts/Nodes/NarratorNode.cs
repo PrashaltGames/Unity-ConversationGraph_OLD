@@ -12,7 +12,6 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
     [Serializable]
     public class NarratorNode : MasterNode
     {
-        [SerializeField] protected List<string> textList;
         [NonSerialized] protected List<TextField> textFieldList;
         [NonSerialized] protected Button addTextFieldButton;
         [NonSerialized] protected TemplateContainer defaultContainer;
@@ -46,13 +45,13 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
         }
         public void OnAddTextButton()
         {
-            var newTextField = new ConversationTextFiled();
+            var newTextField = new PrashaltTextFiled();
 
             newTextField.Q<Label>().text = $"Main Text {textFieldList.Count + 1}";
             textFieldList.Add(newTextField.Q<TextField>());
 
             defaultContainer.Add(newTextField);
-            ConversationGraphEditorUtility.MoveDown(defaultContainer, addTextFieldButton);
+            ConversationGraphEditorUtility.MoveUp(defaultContainer, addTextFieldButton);
         }
 
         public override void Initialize(string guid, Rect rect, string json)

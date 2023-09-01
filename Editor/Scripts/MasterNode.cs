@@ -1,11 +1,14 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [Serializable]
 public abstract class MasterNode : Node
 {
+    [SerializeField] protected List<string> textList;
     [NonSerialized] public string guid;
+
     public virtual string ToJson()
     {
         return JsonUtility.ToJson(this);

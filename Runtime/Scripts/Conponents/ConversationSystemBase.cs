@@ -1,43 +1,51 @@
 using Cysharp.Threading.Tasks;
-using Prashalt.Unity.ConversationGraph;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class ConversationSystemBase : MonoBehaviour
+namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 {
-    [Header("Data")]
-    [SerializeField] private ConversationGraphAsset conversationAsset;
-
-    protected Func<ConversationData, UniTask> OnNodeChangeAction;
-    protected Action OnConversationFinishedAction;
-    public async void StartConversation()
+    public abstract class ConversationSystemBase : MonoBehaviour
     {
-        var previousNodeData = conversationAsset.StartNode;
-        for (var i = 0; i < conversationAsset.Nodes.Count; i++)
+        [Header("Data")]
+        [SerializeField] private ConversationGraphAsset conversationAsset;
+
+        public Func<ConversationData, UniTask> OnNodeChangeAction;
+        public Func<ConversationData, UniTask> OnShowOptionsAction;
+        public Action OnConversationFinishedAction;
+        public async void StartConversation()
         {
-            var nodeDataList = conversationAsset.GetNextNode(previousNodeData);
-            int nodeCount = 0;
-            foreach (var nodeData in nodeDataList)
+            var previousNodeData = conversationAsset.StartNode;
+            for (var i = 0; i < conversationAsset.Nodes.Count; i++)
             {
-                var data = JsonUtility.FromJson<ConversationData>(nodeData.json);
-                await OnNodeChangeAction.Invoke(data);
+                var nodeDataList = conversationAsset.GetNextNode(previousNodeData);
+                int nodeCount = 0;
+                foreach (var nodeData in nodeDataList)
+                {
+                    var data = JsonUtility.FromJson<ConversationData>(nodeData.json);
+                    if (nodeData.typeName.Split(".")[4] == "SelectNode")
+                    {
+                        await OnShowOptionsAction(data);
+                    }
+                    else
+                    {
+                        await OnNodeChangeAction.Invoke(data);
+                    }
 
-                nodeCount++;
-                previousNodeData = nodeData;
+                    nodeCount++;
+                    previousNodeData = nodeData;
+                }
+                i += nodeCount;
             }
-            i += nodeCount;
+            OnConversationFinishedAction.Invoke();
         }
-        OnConversationFinishedAction.Invoke();
-    }
-    
-    protected async UniTask WaitClick()
-    {
+
+        protected async UniTask WaitClick()
+        {
 #if ENABLE_LEGACY_INPUT_MANAGER
-        await UniTask.WaitUntil(() => Input.GetMouseButtonDown(0));
+            await UniTask.WaitUntil(() => Input.GetMouseButtonDown(0));
 #elif ENABLE_INPUT_SYSTEM
         
 #endif
+        }
     }
 }

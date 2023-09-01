@@ -5,11 +5,11 @@ using UnityEngine.UIElements;
 
 namespace Prashalt.Unity.ConversationGraph.Components
 {
-    public class ConversationTextFiled : VisualElement
+    public class PrashaltTextFiled : VisualElement
     {
-        public new class UxmlFactory : UxmlFactory<ConversationTextFiled> { }
+        public new class UxmlFactory : UxmlFactory<PrashaltTextFiled> { }
 
-        public ConversationTextFiled()
+        public PrashaltTextFiled()
         {
 
             var label = new Label

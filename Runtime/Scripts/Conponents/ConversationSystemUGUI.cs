@@ -1,58 +1,69 @@
-using Prashalt.Unity.ConversationGraph;
 using UnityEngine;
 using TMPro;
 using Cysharp.Threading.Tasks;
+using Prashalt.Unity.ConversationGraph.Conponents.Base;
 
-[RequireComponent(typeof(AudioSource))]
-public class ConversationSystemUGUI : ConversationSystemBase
+namespace Prashalt.Unity.ConversationGraph.Conponents
 {
-    [Header("GUI")]
-    [SerializeField] private TextMeshProUGUI mainText;
-    [SerializeField] private TextMeshProUGUI speaker;
-
-    [Header("Parameter")]
-    [SerializeField] private int textAnimationSpeed;
-
-
-    private AudioSource audioSource;
-
-    public void Start()
+    [RequireComponent(typeof(AudioSource))]
+    public class ConversationSystemUGUI : ConversationSystemBase
     {
-        audioSource = GetComponent<AudioSource>();
-        OnNodeChangeAction += OnNodeChange;
-        OnConversationFinishedAction += OnConvasationFinished;
-        StartConversation();
-    }
+        [Header("GUI")]
+        [SerializeField] private TextMeshProUGUI mainText;
+        [SerializeField] private TextMeshProUGUI speaker;
 
-    private async UniTask OnNodeChange(ConversationData data)
-    {
-        if (data.textList == null || data.textList.Count == 0) return;
+        [Header("Parameter")]
+        [SerializeField] private int textAnimationSpeed;
 
-        //Update Text
-        speaker.text = data.speakerName;
 
-        foreach (var text in data.textList)
+        private AudioSource audioSource;
+
+        public void Start()
         {
-            audioSource.Play();
+            audioSource = GetComponent<AudioSource>();
+            OnNodeChangeAction += OnNodeChange;
+            OnShowOptionsAction += OnShowOptions;
+            OnConversationFinishedAction += OnConvasationFinished;
+        }
 
-            mainText.maxVisibleCharacters = 0;
-            mainText.text = text;
+        private async UniTask OnNodeChange(ConversationData data)
+        {
+            if (data.textList == null || data.textList.Count == 0) return;
 
-            //アニメーション
-            for (var i = 1; i <= mainText.text.Length; i++)
+            //Update Text
+            speaker.text = data.speakerName;
+
+            foreach (var text in data.textList)
             {
-                mainText.maxVisibleCharacters = i;
-                await UniTask.Delay(textAnimationSpeed);
-                //TODO クリックしてたら全部にする
-            }
+                audioSource.Play();
 
-            await WaitClick();
-            audioSource.Stop();
+                mainText.maxVisibleCharacters = 0;
+                mainText.text = text;
+
+                //アニメーション
+                for (var i = 1; i <= mainText.text.Length; i++)
+                {
+                    mainText.maxVisibleCharacters = i;
+                    await UniTask.Delay(textAnimationSpeed);
+                    //TODO クリックしてたら全部にする
+                }
+
+                await WaitClick();
+                audioSource.Stop();
+            }
+        }
+        private async UniTask OnShowOptions(ConversationData data)
+        {
+            foreach(var option in data.textList)
+            {
+                
+            }
+        }
+        private void OnConvasationFinished()
+        {
+            speaker.text = "";
+            mainText.text = "";
         }
     }
-    private void OnConvasationFinished()
-    {
-        speaker.text = "";
-        mainText.text = "";
-    }
+
 }
