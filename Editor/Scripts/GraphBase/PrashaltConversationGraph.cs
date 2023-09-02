@@ -13,7 +13,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
     public class PrashaltConversationGraph : GraphView
     {
         public PrashaltConversationWindow _window;
-#region Func_UnityEditor
+        #region Func_UnityEditor
         public PrashaltConversationGraph(PrashaltConversationWindow window)
         {
             //ScritableObjectから追加する。
@@ -55,6 +55,8 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 ShowNodesFromAsset(_window.ConvasationGraphAsset);
                 ShowEdgeFromAsset(_window.ConvasationGraphAsset);
             }
+
+            graphViewChanged = OnGraphViewChange;
         }
         // GetCompatiblePortsをオーバーライドする
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -79,6 +81,22 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             }));
 
             return compatiblePorts;
+        }
+        public GraphViewChange OnGraphViewChange(GraphViewChange change)
+        {
+            #region OnRemoveElement
+            if (change.elementsToRemove != null)
+            {
+                foreach(var e in change.elementsToRemove)
+                {
+                    if(e is Node node && node.title == "Start")
+                    {
+                        Add(e);
+                    }
+                }
+            }
+            #endregion
+            return change;
         }
         #endregion
         #region Func_Original

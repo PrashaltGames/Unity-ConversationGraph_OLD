@@ -1,4 +1,6 @@
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Prashalt.Unity.ConversationGraph.Nodes
 {
@@ -12,6 +14,8 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
             var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
             outputPort.portName = "Value";
             outputContainer.Add(outputPort); // 出力用ポートはoutputContainerに追加する
+
+            capabilities = Capabilities.Selectable | Capabilities.Movable | Capabilities.Ascendable | Capabilities.Copiable | Capabilities.Snappable | Capabilities.Groupable;
         }
     }
 }
