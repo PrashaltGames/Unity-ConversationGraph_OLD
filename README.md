@@ -19,10 +19,11 @@ Install this package with UPM.
 3. Use `ConversationSystemUGUI` in Runtime with your Conversation Graph Asset.
 ## Custom
 You can create custom components for ConvasationGraph using `ConversationSystemBase`.
-This class provided 2 actions.
-1. `OnNodeChangeAction`
-2. `OnConversationFinishedAction`
+This class provided 3 Events.
+1. `OnNodeChangeEvent`
+2. `OnShowOptionsEvent`
+3. `OnConversationFinishedEvent`
 # NodeList
 - SpeakerNode : Normal node, enable to set speaker name and text.
 - NarratorNode : SpeakerNode without speaker name.
-
+- SelectNode : Node for making the branch by options.
