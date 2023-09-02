@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -13,9 +14,19 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         public ConversationGraphAsset ConvasationGraphAsset { set; get; }
         public PrashaltConversationGraph convasationGraphView;
 
+        private bool isAssetSet = false;
+
         public void Open(ConversationGraphAsset convasationGraphAsset)
         {
             ConvasationGraphAsset = convasationGraphAsset;
+
+            isAssetSet = true;
+
+            Show();
+        }
+        private async void OnEnable()
+        {
+            await UniTask.WaitUntil(() => isAssetSet);
             var graphView = new PrashaltConversationGraph(this);
             rootVisualElement.Add(graphView);
 
@@ -23,12 +34,6 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             var saveButton = new ToolbarButton(OnSave) { text = "Save", name = "save-button" };
             toolvar.Add(saveButton);
             rootVisualElement.Add(toolvar);
-
-            Show();
-        }
-        private void OnEnable()
-        {
-            
         }
 
         [OnOpenAsset()]
