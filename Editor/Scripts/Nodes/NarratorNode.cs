@@ -51,7 +51,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
             textFieldList.Add(newTextField.Q<TextField>());
 
             defaultContainer.Add(newTextField);
-            ConversationGraphEditorUtility.MoveUp(defaultContainer, addTextFieldButton);
+            ConversationGraphEditorUtility.MoveDown(defaultContainer, addTextFieldButton);
         }
 
         public override void Initialize(string guid, Rect rect, string json)

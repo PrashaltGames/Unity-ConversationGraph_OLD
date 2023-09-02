@@ -110,7 +110,6 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 //‘O‚Æ“¯‚¶‚È‚ç‚Q‚Â–Ú‚ð–„‚ß‚é
                 if(previousBaseNode is not null && baseNode.guid == previousBaseNode.guid)
                 {
-                    Debug.Log("‘O‚Æ“¯‚¶");
                     outputIndex++;
                 }
                 else

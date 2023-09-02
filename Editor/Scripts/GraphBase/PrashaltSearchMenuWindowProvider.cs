@@ -32,7 +32,11 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
             new SearchTreeGroupEntry(new GUIContent("Logic")) { level = 1 },
 
-            new SearchTreeEntry(new GUIContent(nameof(SelectNode))) { level = 2, userData = typeof(SelectNode) }
+            new SearchTreeEntry(new GUIContent(nameof(SelectNode))) { level = 2, userData = typeof(SelectNode) },
+
+            new SearchTreeGroupEntry(new GUIContent("Other")) { level = 1 },
+
+            new SearchTreeEntry(new GUIContent(nameof(EndNode))) { level = 2, userData = typeof(EndNode) },
         };
 
 
