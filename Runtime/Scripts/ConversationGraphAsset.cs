@@ -93,10 +93,16 @@ namespace Prashalt.Unity.ConversationGraph
             _edges.Clear();
         }
 
-        public IEnumerable<NodeData> GetNextNode(NodeData nodeData)
+        public List<NodeData> GetNextNode(NodeData nodeData)
         {
-            var edge = Edges.FirstOrDefault(x => x.baseNodeGuid == nodeData.guid);
-            var result = Nodes.Where(x => x.guid == edge.targetNodeGuid);
+            var edges = Edges.Where(x => x.baseNodeGuid == nodeData.guid);
+            List<NodeData> result = new();
+            foreach(var edge in edges)
+            {
+                var nextNode = Nodes.First(x => x.guid == edge.targetNodeGuid);
+                result.Add(nextNode);
+            }
+
             return result;
         }
     }

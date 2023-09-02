@@ -12,6 +12,9 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         public Func<ConversationData, UniTask> OnNodeChangeAction;
         public Func<ConversationData, UniTask> OnShowOptionsAction;
         public Action OnConversationFinishedAction;
+
+        private bool isSelectMode = false;
+        protected int optionId;
         public async void StartConversation()
         {
             var previousNodeData = conversationAsset.StartNode;
@@ -21,14 +24,26 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                 int nodeCount = 0;
                 foreach (var nodeData in nodeDataList)
                 {
+                    //SelectModeÇÃéûÇÕÇªÇÃî‘çÜÇÃÇ›Ççƒê∂Ç∑ÇÈ
+                    if(isSelectMode && optionId != nodeCount)
+                    {
+                        Debug.Log($"ëIëéàÇ≈Ç»Ç¢:{nodeCount}");
+                        nodeCount++;
+
+                        continue;
+                    }
+                    
+                    //ÉmÅ[ÉhÇï™êÕ
                     var data = JsonUtility.FromJson<ConversationData>(nodeData.json);
                     if (nodeData.typeName.Split(".")[4] == "SelectNode")
                     {
-                        await OnShowOptionsAction(data);
+                        await OnShowOptionsAction.Invoke(data);
+                        isSelectMode = true;
                     }
                     else
                     {
                         await OnNodeChangeAction.Invoke(data);
+                        isSelectMode = false;
                     }
 
                     nodeCount++;
