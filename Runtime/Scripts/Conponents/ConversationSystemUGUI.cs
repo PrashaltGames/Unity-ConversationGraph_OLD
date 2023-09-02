@@ -26,9 +26,9 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         public void Start()
         {
             audioSource = GetComponent<AudioSource>();
-            OnNodeChangeAction += OnNodeChange;
-            OnShowOptionsAction += OnShowOptions;
-            OnConversationFinishedAction += OnConvasationFinished;
+            OnNodeChangeEvent += OnNodeChange;
+            OnShowOptionsEvent += OnShowOptions;
+            OnConversationFinishedEvent += OnConvasationFinished;
         }
 
         private async UniTask OnNodeChange(ConversationData data)

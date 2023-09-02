@@ -73,6 +73,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
             base.Initialize(guid, rect, json);
             var jsonObj = JsonUtility.FromJson<SelectNode>(json);
             int i = 0;
+            if (jsonObj is null) return;
             foreach(var text in jsonObj.textList)
             {
                 if (i > 0)
