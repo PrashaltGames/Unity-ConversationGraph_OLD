@@ -15,7 +15,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
             outputPort.portName = "Value";
             outputContainer.Add(outputPort); // 出力用ポートはoutputContainerに追加する
 
-            capabilities = Capabilities.Selectable | Capabilities.Movable | Capabilities.Ascendable | Capabilities.Copiable | Capabilities.Snappable | Capabilities.Groupable;
+            capabilities &= ~Capabilities.Deletable;
         }
     }
 }
