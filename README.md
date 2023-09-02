@@ -4,6 +4,8 @@ Node-based package for creating conversation for Unity.
 Develop by AtsuAtsu0120(X:@KaidoAtsuya)
 ## Warning
 **It is experimental package.**
+In addition, secondary distribution and secondary processing are prohibited, at least until the creator's job search is complete.
+
 ## Suppoted
 - UGUI
 # Getting started
