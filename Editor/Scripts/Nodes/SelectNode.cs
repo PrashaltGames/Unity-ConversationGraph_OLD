@@ -71,6 +71,17 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
         public override void Initialize(string guid, Rect rect, string json)
         {
             base.Initialize(guid, rect, json);
+            var jsonObj = JsonUtility.FromJson<SelectNode>(json);
+            int i = 0;
+            foreach(var text in jsonObj.textList)
+            {
+                if (i > 0)
+                {
+                    OnAddOptionButton();
+                }
+                selectOptionTextList[i].SetValueWithoutNotify(text);
+                i++;
+            }
         }
         public override string ToJson()
         {

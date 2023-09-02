@@ -99,21 +99,46 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         public async void ShowEdgeFromAsset(ConversationGraphAsset asset)
         {
             await UniTask.Delay(10);
+            MasterNode previousBaseNode = null;
+            int outputIndex = 0;
             foreach (var edgeData in asset.Edges)
             {
                 var baseNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == edgeData.baseNodeGuid);
                 var targetNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == edgeData.targetNodeGuid);
                 if (baseNode is null || targetNode is null) return;
 
+                //‘O‚Æ“¯‚¶‚È‚ç‚Q‚Â–Ú‚ğ–„‚ß‚é
+                if(previousBaseNode is not null && baseNode.guid == previousBaseNode.guid)
+                {
+                    Debug.Log("‘O‚Æ“¯‚¶");
+                    outputIndex++;
+                }
+                else
+                {
+                    outputIndex = 0;
+                }
+
                 var input = targetNode.inputContainer.Children().FirstOrDefault(x => x is Port) as Port;
-                var output = baseNode.outputContainer.Children().FirstOrDefault(x => x is Port) as Port;
+                var outputs = baseNode.outputContainer.Children().Where(x => x is Port);
 
-                if (input == null || output == null) return;
+                int i = 0;
+                foreach(Port output in outputs)
+                {
+                    if (input == null || output == null) return;
+                    if (outputIndex != i)
+                    {
+                        i++;
+                        continue;
+                    }
 
-                var edge = new Edge() { input = input, output = output };
-                edge.input.Connect(edge);
-                edge.output.Connect(edge);
-                Add(edge);
+                    var edge = new Edge() { input = input, output = output };
+                    edge.input.Connect(edge);
+                    edge.output.Connect(edge);
+                    Add(edge);
+                    i++;
+                }
+
+                previousBaseNode = baseNode;
             }
             
         }
