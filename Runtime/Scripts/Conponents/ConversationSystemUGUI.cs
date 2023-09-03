@@ -22,13 +22,27 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 
         private AudioSource audioSource;
         private bool isOptionSelected = false;
+        private bool isSkipText = false;
+        private bool isStartAnimation = false;
 
-        public void Start()
+        private void Start()
         {
             audioSource = GetComponent<AudioSource>();
             OnNodeChangeEvent += OnNodeChange;
             OnShowOptionsEvent += OnShowOptions;
             OnConversationFinishedEvent += OnConvasationFinished;
+        }
+
+        private void Update()
+        {
+#if ENABLE_LEGACY_INPUT_MANAGER
+            if(Input.GetMouseButtonDown(0) && isStartAnimation)
+            {
+                isSkipText = true;
+            }
+#elif ENABLE_INPUT_SYSTEM
+        
+#endif
         }
 
         private async UniTask OnNodeChange(ConversationData data)
@@ -45,14 +59,28 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
                 mainText.maxVisibleCharacters = 0;
                 mainText.text = text;
 
+                isSkipText = false;
+
                 //アニメーション
                 for (var i = 1; i <= mainText.text.Length; i++)
                 {
                     mainText.maxVisibleCharacters = i;
                     await UniTask.Delay(textAnimationSpeed);
-                    //TODO クリックしてたら全部にする
+
+                    //クリックしてたら全部にする
+                    if (isSkipText)
+                    {
+                        mainText.maxVisibleCharacters = mainText.text.Length;
+                        isSkipText = false;
+                        break;
+                    }
+                    else
+                    {
+                        isStartAnimation = true;
+                    }
                 }
 
+                isStartAnimation = false;
                 await WaitClick();
                 audioSource.Stop();
             }
