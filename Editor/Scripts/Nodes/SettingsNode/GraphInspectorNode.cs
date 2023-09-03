@@ -8,9 +8,11 @@ public class GraphInspectorNode : Node
 {
     public bool shouldTextAnimation { get; private set; } = true;
     public bool isNeedClick { get; private set; } = true;
-    public int time { get; private set; }
+    public int switchingSpeed { get; private set; }
+    public int animationSpeed { get; private set; }
 
-    private IntegerField timeField;
+    private IntegerField timeToWaitField;
+    private IntegerField animationSpeedField;
     private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector.uxml";
     public GraphInspectorNode(ConversationGraphAsset asset)
     {
@@ -21,16 +23,21 @@ public class GraphInspectorNode : Node
         var defaultContainer = visualTree.Instantiate();
         mainContainer.Add(defaultContainer);
 
-        timeField = defaultContainer.Q<IntegerField>("timeToWait");
-        timeField.RegisterValueChangedCallback(x => OnChangeTimeToWait(x));
-        timeField.SetValueWithoutNotify(asset.settings.time);
-        time = asset.settings.time;
+        timeToWaitField = defaultContainer.Q<IntegerField>("timeToWait");
+        timeToWaitField.RegisterValueChangedCallback(x => OnChangeTimeToWait(x));
+        timeToWaitField.SetValueWithoutNotify(asset.settings.switchingSpeed);
+        switchingSpeed = asset.settings.switchingSpeed;
+
+        animationSpeedField = defaultContainer.Q<IntegerField>("animationSpeed");
+        animationSpeedField.RegisterValueChangedCallback(x => OnChangeAnimationSpeed(x));
+        animationSpeedField.SetValueWithoutNotify(asset.settings.animationSpeed);
+        animationSpeed = asset.settings.animationSpeed;
 
         var textAnimationToggle = defaultContainer.Q<Toggle>("textAnimation");
         textAnimationToggle.RegisterValueChangedCallback(x => OnChangeTextAnimationSettings(x));
         textAnimationToggle.value = asset.settings.shouldTextAnimation;
         shouldTextAnimation = asset.settings.shouldTextAnimation;
-        ChangeWaitToTime(shouldTextAnimation);
+        ChangeStateSwitchingSpeedEnable(shouldTextAnimation);
 
         var needClickToggle = defaultContainer.Q<Toggle>("needClick");
         needClickToggle.RegisterValueChangedCallback(x => OnChangeNeedClickSettings(x));
@@ -42,25 +49,41 @@ public class GraphInspectorNode : Node
     public void OnChangeTextAnimationSettings(ChangeEvent<bool> e)
     {
         shouldTextAnimation = e.newValue;
-        ChangeWaitToTime(shouldTextAnimation);
+        ChangeStateAnimationSpeedEnable(shouldTextAnimation);
     }
     public void OnChangeNeedClickSettings(ChangeEvent<bool> e)
     {
         isNeedClick = e.newValue;
+        ChangeStateSwitchingSpeedEnable(isNeedClick);
     }
-    public void ChangeWaitToTime(bool value)
+    public void ChangeStateSwitchingSpeedEnable(bool value)
     {
         if (value == true)
         {
-            timeField.Q<Label>().text = "Animation Speed (char/msec)";
+            timeToWaitField.SetEnabled(false);
         }
         else
         {
-            timeField.Q<Label>().text = "Time to Wait (msec)";
+            timeToWaitField.SetEnabled(true);
+        }
+    }
+    public void ChangeStateAnimationSpeedEnable(bool value)
+    {
+        if (value == true)
+        {
+            animationSpeedField.SetEnabled(true);
+        }
+        else
+        {
+            animationSpeedField.SetEnabled(false);
         }
     }
     public void OnChangeTimeToWait(ChangeEvent<int> e)
     {
-        time = e.newValue;
+        switchingSpeed = e.newValue;
+    }
+    public void OnChangeAnimationSpeed(ChangeEvent<int> e)
+    {
+        animationSpeed = e.newValue;
     }
 }

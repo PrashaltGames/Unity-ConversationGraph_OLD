@@ -64,7 +64,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
                     for (var i = 1; i <= mainText.text.Length; i++)
                     {
                         mainText.maxVisibleCharacters = i;
-                        await UniTask.Delay(conversationAsset.settings.time);
+                        await UniTask.Delay(conversationAsset.settings.animationSpeed);
 
                         //クリックしてたら全部にする
                         if (isSkipText)
@@ -92,7 +92,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
                 }
                 else
                 {
-                    await UniTask.Delay(conversationAsset.settings.time);
+                    await UniTask.Delay(conversationAsset.settings.switchingSpeed);
                 }
                 audioSource.Stop();
             }

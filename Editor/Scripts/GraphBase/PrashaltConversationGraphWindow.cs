@@ -95,7 +95,8 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 {
                     ConvasationGraphAsset.settings.isNeedClick = graphInspector.isNeedClick;
                     ConvasationGraphAsset.settings.shouldTextAnimation = graphInspector.shouldTextAnimation;
-                    ConvasationGraphAsset.settings.time = graphInspector.time;
+                    ConvasationGraphAsset.settings.switchingSpeed = graphInspector.switchingSpeed;
+                    ConvasationGraphAsset.settings.animationSpeed = graphInspector.animationSpeed;
                 }
             }
 

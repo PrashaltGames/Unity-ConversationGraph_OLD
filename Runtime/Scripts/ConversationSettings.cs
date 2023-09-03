@@ -8,5 +8,6 @@ public struct ConversationSettings
 {
     [SerializeField] public bool isNeedClick;
     [SerializeField] public bool shouldTextAnimation;
-    [SerializeField] public int time;
+    [SerializeField] public int switchingSpeed;
+    [SerializeField] public int animationSpeed;
 }
