@@ -15,8 +15,17 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 
         private bool isSelectMode = false;
         protected int optionId;
+
+        private bool isFinishInit;
+
+        protected virtual void Start()
+        {
+            isFinishInit = true;
+        }
         public async void StartConversation()
         {
+            await UniTask.WaitUntil(() => isFinishInit);
+
             var previousNodeData = conversationAsset.StartNode;
             for (var i = 0; i < conversationAsset.Nodes.Count; i++)
             {

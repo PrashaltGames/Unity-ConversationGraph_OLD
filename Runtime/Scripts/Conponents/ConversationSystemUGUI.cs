@@ -22,12 +22,14 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         private bool isSkipText = false;
         private bool isStartAnimation = false;
 
-        private void Start()
+        protected override void Start()
         {
             audioSource = GetComponent<AudioSource>();
             OnNodeChangeEvent += OnNodeChange;
             OnShowOptionsEvent += OnShowOptions;
             OnConversationFinishedEvent += OnConvasationFinished;
+
+            base.Start();
         }
 
         private void Update()
