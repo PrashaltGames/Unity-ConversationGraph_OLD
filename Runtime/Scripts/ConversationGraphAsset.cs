@@ -9,6 +9,7 @@ namespace Prashalt.Unity.ConversationGraph
     {
         [SerializeField] private List<NodeData> _nodes;
         [SerializeField] private List<EdgeData> _edges;
+        [SerializeField] public ConversationSettings settings;
         public IReadOnlyList<NodeData> Nodes
         {
             get { return _nodes; }

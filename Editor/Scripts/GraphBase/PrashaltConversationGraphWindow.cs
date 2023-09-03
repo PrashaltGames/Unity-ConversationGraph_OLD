@@ -87,8 +87,16 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
             foreach(var node in convasationGraphView.nodes)
             {
-                if (node is not MasterNode) continue;
-                ConvasationGraphAsset.SaveNode(ConversationGraphEditorUtility.NodeToData(node as MasterNode));
+                if (node is MasterNode)
+                {
+                    ConvasationGraphAsset.SaveNode(ConversationGraphEditorUtility.NodeToData(node as MasterNode));
+                }
+                else if(node is GraphInspectorNode graphInspector)
+                {
+                    ConvasationGraphAsset.settings.isNeedClick = graphInspector.isNeedClick;
+                    ConvasationGraphAsset.settings.shouldTextAnimation = graphInspector.shouldTextAnimation;
+                    ConvasationGraphAsset.settings.time = graphInspector.time;
+                }
             }
 
             ConvasationGraphAsset.ClearEdges();
@@ -99,6 +107,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
                 ConvasationGraphAsset.SaveEdge(edgeData);
             }
+
             EditorUtility.SetDirty(ConvasationGraphAsset);
             AssetDatabase.SaveAssets();
         }

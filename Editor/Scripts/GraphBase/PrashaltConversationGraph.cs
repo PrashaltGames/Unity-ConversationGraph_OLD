@@ -55,8 +55,8 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 ShowNodesFromAsset(_window.ConvasationGraphAsset);
                 ShowEdgeFromAsset(_window.ConvasationGraphAsset);
             }
-
-            graphViewChanged = OnGraphViewChange;
+            var graphInspector = new GraphInspectorNode(_window.ConvasationGraphAsset);
+            AddElement(graphInspector);
         }
         // GetCompatiblePortsをオーバーライドする
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -81,22 +81,6 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             }));
 
             return compatiblePorts;
-        }
-        public GraphViewChange OnGraphViewChange(GraphViewChange change)
-        {
-            #region OnRemoveElement
-            if (change.elementsToRemove != null)
-            {
-                foreach(var e in change.elementsToRemove)
-                {
-                    if(e is Node node && node.title == "Start")
-                    {
-                        Add(e);
-                    }
-                }
-            }
-            #endregion
-            return change;
         }
         #endregion
         #region Func_Original

@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement style="flex-grow: 1; min-width: 0; max-width: 500px; height: 100%; width: 300px;">
+        <ui:Toggle label="Need Click" name="needClick" value="true" focusable="true" style="display: flex;" />
+        <ui:Toggle label="Text Animation" name="textAnimation" value="true" />
+        <ui:IntegerField label="Time to Wait(msec)" value="3000" name="timeToWait" style="display: flex; overflow: hidden; visibility: visible; width: 100%; justify-content: flex-start; align-items: stretch; flex-direction: row; margin-left: 20px; max-width: none; min-width: auto; margin-right: 4px; -unity-text-align: upper-left;" />
+    </ui:VisualElement>
+</ui:UXML>

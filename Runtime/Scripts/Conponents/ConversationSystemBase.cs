@@ -7,7 +7,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
     public abstract class ConversationSystemBase : MonoBehaviour
     {
         [Header("Data")]
-        [SerializeField] private ConversationGraphAsset conversationAsset;
+        [SerializeField] protected ConversationGraphAsset conversationAsset;
 
         public Func<ConversationData, UniTask> OnNodeChangeEvent;
         public Func<ConversationData, UniTask> OnShowOptionsEvent;

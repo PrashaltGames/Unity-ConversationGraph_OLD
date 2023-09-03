@@ -16,9 +16,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         [SerializeField] private GameObject optionObjParent;
         [SerializeField] private GameObject optionPrefab;
 
-        [Header("Parameter")]
-        [SerializeField] private int textAnimationSpeed;
-
 
         private AudioSource audioSource;
         private bool isOptionSelected = false;
@@ -55,37 +52,52 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
             foreach (var text in data.textList)
             {
                 audioSource.Play();
-
-                mainText.maxVisibleCharacters = 0;
                 mainText.text = text;
 
-                isSkipText = false;
-
-                //アニメーション
-                for (var i = 1; i <= mainText.text.Length; i++)
+                if (conversationAsset.settings.shouldTextAnimation)
                 {
-                    mainText.maxVisibleCharacters = i;
-                    await UniTask.Delay(textAnimationSpeed);
+                    mainText.maxVisibleCharacters = 0;
 
-                    //クリックしてたら全部にする
-                    if (isSkipText)
+                    isSkipText = false;
+
+                    //アニメーション
+                    for (var i = 1; i <= mainText.text.Length; i++)
                     {
-                        mainText.maxVisibleCharacters = mainText.text.Length;
-                        isSkipText = false;
-                        break;
+                        mainText.maxVisibleCharacters = i;
+                        await UniTask.Delay(conversationAsset.settings.time);
+
+                        //クリックしてたら全部にする
+                        if (isSkipText)
+                        {
+                            mainText.maxVisibleCharacters = mainText.text.Length;
+                            isSkipText = false;
+                            break;
+                        }
+                        else
+                        {
+                            isStartAnimation = true;
+                        }
                     }
-                    else
-                    {
-                        isStartAnimation = true;
-                    }
+
+                    isStartAnimation = false;
                 }
-
-                isStartAnimation = false;
-                await WaitClick();
+                else
+                {
+                    mainText.maxVisibleCharacters = mainText.text.Length;
+                }
+                
+                if(conversationAsset.settings.isNeedClick)
+                {
+                    await WaitClick();
+                }
+                else
+                {
+                    await UniTask.Delay(conversationAsset.settings.time);
+                }
                 audioSource.Stop();
             }
         }
-        private async UniTask OnShowOptions(ConversationData data)
+        protected async UniTask OnShowOptions(ConversationData data)
         {
             int id = 0;
             foreach(var option in data.textList)
@@ -101,7 +113,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
             }
             await UniTask.WaitUntil(() => isOptionSelected);
         }
-        private void OnSelectOptionButton(int optionId)
+        protected void OnSelectOptionButton(int optionId)
         {
             Debug.Log(optionId);
             foreach (Transform button in optionObjParent.transform)
@@ -112,7 +124,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 
             isOptionSelected = true;
         }
-        private void OnConvasationFinished()
+        protected void OnConvasationFinished()
         {
             speaker.text = "";
             mainText.text = "";

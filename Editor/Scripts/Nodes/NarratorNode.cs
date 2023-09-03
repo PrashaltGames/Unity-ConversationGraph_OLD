@@ -58,9 +58,19 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
         {
             base.Initialize(guid, rect, json);
             var jsonObj = JsonUtility.FromJson<NarratorNode>(json);
-            if(jsonObj?.textList.Count != 0)
+
+            if(jsonObj is not null)
             {
-                textFieldList[0].SetValueWithoutNotify(jsonObj?.textList[0]);
+                int i = 0;
+                foreach (var text in jsonObj.textList)
+                {
+                    if(i > 0)
+                    {
+                        OnAddTextButton();
+                    }
+                    textFieldList[i].SetValueWithoutNotify(text);
+                    i++;
+                }
             }
         }
         public override string ToJson()
