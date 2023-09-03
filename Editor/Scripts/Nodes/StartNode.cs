@@ -12,7 +12,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 
             // 出力用のポートを作る
             var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-            outputPort.portName = "Value";
+            outputPort.portName = "Start";
             outputContainer.Add(outputPort); // 出力用ポートはoutputContainerに追加する
 
             capabilities &= ~Capabilities.Deletable;
