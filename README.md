@@ -12,7 +12,7 @@ In addition, secondary distribution and secondary processing are prohibited, at 
 # Getting started
 Install this package with UPM.
 
-`https://github.com/PrashaltGames/Unity-ConvasationGraph.git`
+`https://github.com/PrashaltGames/Unity-ConversationGraph.git`
 # How to Use
 1. Make `Conversation Graph Asset` in ProjectWindow.
 2. Create your Conversation using Nodes.
