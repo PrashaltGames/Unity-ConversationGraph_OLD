@@ -21,11 +21,28 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         protected virtual void Start()
         {
             isFinishInit = true;
+            Debug.Log("Init");
+        }
+        /// <summary>
+        /// Asset Set Method
+        /// </summary>
+        /// <param name="asset"></param>
+        /// <returns>¬Œ÷‚µ‚Ä‚¢‚é‚©iasset‚ªnull‚Ì‚Í¸”s‚·‚éj</returns>
+        public bool SetConversationAsset(ConversationGraphAsset asset)
+        {
+            if(asset is null)
+            {
+                return false;
+            }
+
+            conversationAsset = asset;
+            return true;
         }
         public async void StartConversation()
         {
             await UniTask.WaitUntil(() => isFinishInit);
 
+            Debug.Log("Start");
             var previousNodeData = conversationAsset.StartNode;
             for (var i = 0; i < conversationAsset.Nodes.Count; i++)
             {
