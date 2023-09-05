@@ -1,7 +1,7 @@
 # Unity-ConversationGraph
 Node-based package for creating conversation for Unity.
 ## Developer
-Develop by AtsuAtsu0120(X:@KaidoAtsuya)
+Develop by AtsuAtsu0120(X:[@KaidoAtsuya](https://twitter.com/KaidoAtsuya))
 ## Warning
 **It is experimental package.**
 
