@@ -9,9 +9,10 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         [Header("Data")]
         [SerializeField] protected ConversationGraphAsset conversationAsset;
 
-        public Func<ConversationData, UniTask> OnNodeChangeEvent;
-        public Func<ConversationData, UniTask> OnShowOptionsEvent;
-        public Action OnConversationFinishedEvent;
+        public Func<ConversationData, UniTask> OnNodeChangeEvent { get; set; }
+        public Func<ConversationData, UniTask> OnShowOptionsEvent { get; set; }
+        public Action OnConversationFinishedEvent { get; set; }
+        public Action OnConversationStartEvent { get; set; }
 
         private bool isSelectMode = false;
         protected int optionId;
@@ -42,7 +43,8 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         {
             await UniTask.WaitUntil(() => isFinishInit);
 
-            Debug.Log("Start");
+            OnConversationStartEvent.Invoke();
+            
             var previousNodeData = conversationAsset.StartNode;
             for (var i = 0; i < conversationAsset.Nodes.Count; i++)
             {

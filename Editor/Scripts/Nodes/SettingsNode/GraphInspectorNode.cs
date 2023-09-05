@@ -2,6 +2,7 @@ using Prashalt.Unity.ConversationGraph;
 using Prashalt.Unity.ConversationGraph.Editor;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEngine;
 using UnityEngine.UIElements;
 
 public class GraphInspectorNode : Node
@@ -17,6 +18,9 @@ public class GraphInspectorNode : Node
     public GraphInspectorNode(ConversationGraphAsset asset)
     {
         title = "Graph Inspector";
+
+        //右上のボタンとinputContainerを消す
+        titleButtonContainer.Q<VisualElement>().style.display = DisplayStyle.None;
 
         //エレメントを追加
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
