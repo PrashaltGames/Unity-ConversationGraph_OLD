@@ -22,7 +22,7 @@ public class GraphInspectorNode : Node
 #if UNITY_2022_1_OR_NEWER
     private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector.uxml";
 #else
-    private const string elementPath = ConversationGraphEditorUtility.packageFilePath * "Editor/UXML/GraphInspector2021.uxml";
+    private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector2021.uxml";
 #endif
     public GraphInspectorNode(ConversationGraphAsset asset)
     {
