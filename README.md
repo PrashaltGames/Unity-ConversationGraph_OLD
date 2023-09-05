@@ -23,9 +23,10 @@ Install this package with UPM.
 ## Custom
 You can create custom components for ConvasationGraph using `ConversationSystemBase`.
 This class provided 3 Events.
-1. `OnNodeChangeEvent`
-2. `OnShowOptionsEvent`
-3. `OnConversationFinishedEvent`
+1. `OnStartConvesationEvent`
+2. `OnNodeChangeEvent`
+3. `OnShowOptionsEvent`
+4. `OnConversationFinishedEvent`
 # NodeList
 - SpeakerNode : Normal node, enable to set speaker name and text.
 - NarratorNode : SpeakerNode without speaker name.
