@@ -43,7 +43,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         {
             await UniTask.WaitUntil(() => isFinishInit);
 
-            OnConversationStartEvent.Invoke();
+            OnConversationStartEvent?.Invoke();
             
             var previousNodeData = conversationAsset.StartNode;
             for (var i = 0; i < conversationAsset.Nodes.Count; i++)
