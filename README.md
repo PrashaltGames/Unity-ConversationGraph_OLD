@@ -8,7 +8,10 @@ Develop by AtsuAtsu0120(X:@KaidoAtsuya)
 In addition, secondary distribution and secondary processing are prohibited, at least until the creator's job search is complete.
 
 ## Suppoted
-- UGUI
+- Unity 2021 or newer (with .NET Framework)
+- Refacy Input Manager
+  - Input System (new) will be suppot maybe.
+- uGUI
 # Getting started
 Install this package with UPM.
 
