@@ -2,8 +2,12 @@ using Prashalt.Unity.ConversationGraph;
 using Prashalt.Unity.ConversationGraph.Editor;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 using UnityEngine.UIElements;
+
+#if UNITY_2022_1_OR_NEWER
+#else 
+using UnityEditor.UIElements;
+#endif
 
 public class GraphInspectorNode : Node
 {
@@ -14,7 +18,12 @@ public class GraphInspectorNode : Node
 
     private IntegerField timeToWaitField;
     private IntegerField animationSpeedField;
+
+#if UNITY_2022_1_OR_NEWER
     private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector.uxml";
+#else
+    private const string elementPath = ConversationGraphEditorUtility.packageFilePath * "Editor/UXML/GraphInspector2021.uxml";
+#endif
     public GraphInspectorNode(ConversationGraphAsset asset)
     {
         title = "Graph Inspector";
