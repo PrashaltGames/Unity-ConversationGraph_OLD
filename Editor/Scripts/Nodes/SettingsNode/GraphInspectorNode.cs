@@ -56,6 +56,7 @@ public class GraphInspectorNode : Node
         needClickToggle.RegisterValueChangedCallback(x => OnChangeNeedClickSettings(x));
         needClickToggle.value = asset.settings.isNeedClick;
         isNeedClick = asset.settings.isNeedClick;
+        ChangeStateSwitchingSpeedEnable(isNeedClick);
 
         capabilities &= ~Capabilities.Deletable;
     }
