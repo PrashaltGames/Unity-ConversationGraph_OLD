@@ -20,6 +20,7 @@ Install this package with UPM.
 1. Make `Conversation Graph Asset` in ProjectWindow.
 2. Create your Conversation using Nodes.
 3. Use `ConversationSystemUGUI` in Runtime with your Conversation Graph Asset.
+4. Use `StartConvesation` Method in ConversationSystem Component.
 ## Custom
 You can create custom components for ConvasationGraph using `ConversationSystemBase`.
 This class provided 3 Events.
