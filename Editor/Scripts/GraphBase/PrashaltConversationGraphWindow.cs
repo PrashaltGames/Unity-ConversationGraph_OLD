@@ -1,13 +1,10 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.Callbacks;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.PackageManager.UI;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Prashalt.Unity.ConversationGraph.Editor
 {
@@ -19,6 +16,8 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         public static List<PrashaltConversationWindow> activeWindowList = new();
 
         private bool isAssetSet = false;
+
+        private const string iconPath = ConversationGraphEditorUtility.packageFilePath + "Editor/Icon/ConversationGraphTab.png";
 
         public void Open(ConversationGraphAsset convasationGraphAsset)
         {
@@ -111,9 +110,10 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         private static void CreateNewWindow(ConversationGraphAsset conversationGraphAsset)
         {
             var newWindow = CreateWindow<PrashaltConversationWindow>(typeof(SceneView));
+            var icon = AssetDatabase.LoadAssetAtPath<Texture>(iconPath);
 
             newWindow.Open(conversationGraphAsset);
-            newWindow.titleContent.text = conversationGraphAsset.name;
+            newWindow.titleContent = new(conversationGraphAsset.name, icon);
             newWindow.Focus();
 
             activeWindowList.Add(newWindow);
