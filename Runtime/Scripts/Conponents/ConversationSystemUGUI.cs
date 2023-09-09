@@ -117,7 +117,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         }
         protected void OnSelectOptionButton(int optionId)
         {
-            Debug.Log(optionId);
             foreach (Transform button in optionObjParent.transform)
             {
                 Destroy(button.gameObject);

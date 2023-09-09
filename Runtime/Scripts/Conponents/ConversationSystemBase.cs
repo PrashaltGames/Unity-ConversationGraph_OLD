@@ -54,7 +54,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                     //SelectMode‚Ì‚Í‚»‚Ì”Ô†‚Ì‚İ‚ğÄ¶‚·‚é
                     if(isSelectMode && optionId != nodeCount)
                     {
-                        Debug.Log($"‘I‘ğˆ‚Å‚È‚¢:{nodeCount}");
                         nodeCount++;
 
                         continue;

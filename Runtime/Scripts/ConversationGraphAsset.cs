@@ -96,14 +96,12 @@ namespace Prashalt.Unity.ConversationGraph
 
         public List<NodeData> GetNextNode(NodeData nodeData)
         {
-            Debug.Log(nodeData.guid);
             var edges = Edges.Where(x => x.baseNodeGuid.Split(":")[0] == nodeData.guid);
             List<NodeData> result = new();
             foreach(var edge in edges)
             {
                 var nextNode = Nodes.First(x => x.guid == edge.targetNodeGuid.Split(":")[0]);
                 result.Add(nextNode);
-                Debug.Log(nextNode.json);
             }
 
             return result;
