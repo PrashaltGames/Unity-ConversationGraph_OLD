@@ -9,7 +9,7 @@ In addition, secondary distribution and secondary processing are prohibited, at 
 
 ## Suppoted
 - Unity 2021 or newer (with .NET Framework)
-- Refacy Input Manager
+- Legacy Input Manager
   - Input System (new) will be suppot maybe.
 - uGUI
 # Getting started
