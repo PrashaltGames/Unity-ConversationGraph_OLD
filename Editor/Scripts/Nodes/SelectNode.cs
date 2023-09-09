@@ -1,11 +1,7 @@
-using Codice.Utils;
 using Prashalt.Unity.ConversationGraph.Components;
 using Prashalt.Unity.ConversationGraph.Editor;
-using Prashalt.Unity.ConversationGraph.Nodes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;

@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Callbacks;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -79,12 +80,14 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             if (ConvasationGraphAsset is null) return;
 
             ConvasationGraphAsset.ClearNodes();
+            ConvasationGraphAsset.ClearEdges();
 
-            foreach(var node in convasationGraphView.nodes)
+            foreach (var node in convasationGraphView.nodes)
             {
-                if (node is MasterNode)
+                if (node is MasterNode masterNode)
                 {
-                    ConvasationGraphAsset.SaveNode(ConversationGraphEditorUtility.NodeToData(node as MasterNode));
+                    var nodeData = ConversationGraphEditorUtility.NodeToData(masterNode);
+                    ConvasationGraphAsset.SaveNode(nodeData);
                 }
                 else if(node is GraphInspectorNode graphInspector)
                 {
@@ -96,10 +99,32 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             }
 
             ConvasationGraphAsset.ClearEdges();
-            foreach(var edge in convasationGraphView.edges)
+            foreach (var edge in convasationGraphView.edges)
             {
                 var edgeData = ConversationGraphEditorUtility.EdgeToData(edge);
                 if (edgeData is null) continue;
+
+                var inputOptionId = 0;
+                foreach (var parentChild in edge.input.parent.Children())
+                {
+                    if (parentChild == edge.input)
+                    {
+                        break;
+                    }
+                    inputOptionId++;
+                }
+                edgeData.targetNodeGuid += $":{inputOptionId}";
+
+                var outputOptionId = 0;
+                foreach (var parentChild in edge.output.parent.Children())
+                {
+                    if (parentChild == edge.output)
+                    {
+                        break;
+                    }
+                    outputOptionId++;
+                }
+                edgeData.baseNodeGuid += $":{outputOptionId}";
 
                 ConvasationGraphAsset.SaveEdge(edgeData);
             }

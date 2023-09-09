@@ -102,42 +102,21 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         {
             await UniTask.Delay(10);
             MasterNode previousBaseNode = null;
-            int outputIndex = 0;
             foreach (var edgeData in asset.Edges)
             {
-                var baseNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == edgeData.baseNodeGuid);
-                var targetNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == edgeData.targetNodeGuid);
+                var baseNodeGuidWithCount = edgeData.baseNodeGuid.Split(":");
+                var targetNodeGuidWithCount = edgeData.targetNodeGuid.Split(":");
+                var baseNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == baseNodeGuidWithCount[0]);
+                var targetNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == targetNodeGuidWithCount[0]);
                 if (baseNode is null || targetNode is null) return;
 
-                //‘O‚Æ“¯‚¶‚È‚ç‚Q‚Â–Ú‚ğ–„‚ß‚é
-                if(previousBaseNode is not null && baseNode.guid == previousBaseNode.guid)
-                {
-                    outputIndex++;
-                }
-                else
-                {
-                    outputIndex = 0;
-                }
+                var input = targetNode.inputContainer.Children().Where(x => x is Port).ElementAt(int.Parse(targetNodeGuidWithCount[1])) as Port;
+                var output = baseNode.outputContainer.Children().Where(x => x is Port).ElementAt(int.Parse(baseNodeGuidWithCount[1])) as Port;
 
-                var input = targetNode.inputContainer.Children().FirstOrDefault(x => x is Port) as Port;
-                var outputs = baseNode.outputContainer.Children().Where(x => x is Port);
-
-                int i = 0;
-                foreach(Port output in outputs)
-                {
-                    if (input == null || output == null) return;
-                    if (outputIndex != i)
-                    {
-                        i++;
-                        continue;
-                    }
-
-                    var edge = new Edge() { input = input, output = output };
-                    edge.input.Connect(edge);
-                    edge.output.Connect(edge);
-                    Add(edge);
-                    i++;
-                }
+                var edge = new Edge() { input = input, output = output };
+                edge.input.Connect(edge);
+                edge.output.Connect(edge);
+                Add(edge);
 
                 previousBaseNode = baseNode;
             }
