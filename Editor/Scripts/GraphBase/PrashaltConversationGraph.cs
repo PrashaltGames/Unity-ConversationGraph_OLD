@@ -110,8 +110,8 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 var targetNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == targetNodeGuidWithCount[0]);
                 if (baseNode is null || targetNode is null) return;
 
-                var input = targetNode.inputContainer.Children().Where(x => x is Port).ElementAt(int.Parse(targetNodeGuidWithCount[1])) as Port;
-                var output = baseNode.outputContainer.Children().Where(x => x is Port).ElementAt(int.Parse(baseNodeGuidWithCount[1])) as Port;
+                var input = targetNode.inputContainer.Children().Where(x => x is Port).ElementAt(targetNodeGuidWithCount.Length == 1 ? 0 : int.Parse(targetNodeGuidWithCount[1])) as Port;
+                var output = baseNode.outputContainer.Children().Where(x => x is Port).ElementAt(baseNodeGuidWithCount.Length == 1 ? 0 : int.Parse(baseNodeGuidWithCount[1])) as Port;
 
                 var edge = new Edge() { input = input, output = output };
                 edge.input.Connect(edge);

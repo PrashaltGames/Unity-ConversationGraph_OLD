@@ -22,7 +22,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         protected virtual void Start()
         {
             isFinishInit = true;
-            Debug.Log("Init");
         }
         /// <summary>
         /// Asset Set Method

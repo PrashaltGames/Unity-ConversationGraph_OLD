@@ -28,7 +28,7 @@ namespace Prashalt.Unity.ConversationGraph
                     return null;
                 }
 
-                return Nodes[0];
+                return Nodes.FirstOrDefault(x => x.typeName == "Prashalt.Unity.ConversationGraph.Nodes.StartNode");
             }
         }
 
@@ -96,12 +96,14 @@ namespace Prashalt.Unity.ConversationGraph
 
         public List<NodeData> GetNextNode(NodeData nodeData)
         {
-            var edges = Edges.Where(x => x.baseNodeGuid == nodeData.guid);
+            Debug.Log(nodeData.guid);
+            var edges = Edges.Where(x => x.baseNodeGuid.Split(":")[0] == nodeData.guid);
             List<NodeData> result = new();
             foreach(var edge in edges)
             {
-                var nextNode = Nodes.First(x => x.guid == edge.targetNodeGuid);
+                var nextNode = Nodes.First(x => x.guid == edge.targetNodeGuid.Split(":")[0]);
                 result.Add(nextNode);
+                Debug.Log(nextNode.json);
             }
 
             return result;
