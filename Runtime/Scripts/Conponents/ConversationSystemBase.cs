@@ -9,6 +9,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         [Header("Data")]
         [SerializeField] protected ConversationGraphAsset conversationAsset;
 
+        public bool isBusy { get; private set; } = false;
         public Func<ConversationData, UniTask> OnNodeChangeEvent { get; set; }
         public Func<ConversationData, UniTask> OnShowOptionsEvent { get; set; }
         public Action OnConversationFinishedEvent { get; set; }
@@ -41,6 +42,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         public async void StartConversation()
         {
             await UniTask.WaitUntil(() => isFinishInit);
+            isBusy = true;
 
             OnConversationStartEvent?.Invoke();
             
@@ -78,6 +80,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                 i += nodeCount;
             }
             OnConversationFinishedEvent.Invoke();
+            isBusy = false;
         }
 
         protected async UniTask WaitClick()

@@ -22,22 +22,22 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         List<SearchTreeEntry> ISearchWindowProvider.CreateSearchTree(SearchWindowContext context)
         {
             var entries = new List<SearchTreeEntry>
-        {
-            new SearchTreeGroupEntry(new GUIContent("Create Node")),
+            {
+                new SearchTreeGroupEntry(new GUIContent("Create Node")),
 
-            new SearchTreeGroupEntry(new GUIContent("Text")) { level = 1 },
+                new SearchTreeGroupEntry(new GUIContent("Text")) { level = 1 },
 
-            new SearchTreeEntry(new GUIContent(nameof(NarratorNode))) { level = 2, userData = typeof(NarratorNode) },
-            new SearchTreeEntry(new GUIContent(nameof(SpeakerNode))) { level = 2, userData = typeof(SpeakerNode) },
+                new SearchTreeEntry(new GUIContent(nameof(NarratorNode))) { level = 2, userData = typeof(NarratorNode) },
+                new SearchTreeEntry(new GUIContent(nameof(SpeakerNode))) { level = 2, userData = typeof(SpeakerNode) },
 
-            new SearchTreeGroupEntry(new GUIContent("Logic")) { level = 1 },
+                new SearchTreeGroupEntry(new GUIContent("Logic")) { level = 1 },
 
-            new SearchTreeEntry(new GUIContent(nameof(SelectNode))) { level = 2, userData = typeof(SelectNode) },
+                new SearchTreeEntry(new GUIContent(nameof(SelectNode))) { level = 2, userData = typeof(SelectNode) },
 
-            new SearchTreeGroupEntry(new GUIContent("Other")) { level = 1 },
+                new SearchTreeGroupEntry(new GUIContent("Other")) { level = 1 },
 
-            new SearchTreeEntry(new GUIContent(nameof(EndNode))) { level = 2, userData = typeof(EndNode) },
-        };
+                new SearchTreeEntry(new GUIContent(nameof(EndNode))) { level = 2, userData = typeof(EndNode) },
+            };
 
 
             return entries;

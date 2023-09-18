@@ -16,7 +16,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         [SerializeField] private GameObject optionObjParent;
         [SerializeField] private GameObject optionPrefab;
 
-
         private AudioSource audioSource;
         private bool isOptionSelected = false;
         private bool isSkipText = false;
