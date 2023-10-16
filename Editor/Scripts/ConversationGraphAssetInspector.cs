@@ -11,7 +11,6 @@ namespace Prashalt.Unity.ConversationGraph.Editor
     [CustomEditor(typeof(ConversationGraphAsset))]
     public class ConversationGraphAssetInspector : UnityEditor.Editor
     {
-        private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/";
         public override VisualElement CreateInspectorGUI()
         {
             var visualElement = new VisualElement();

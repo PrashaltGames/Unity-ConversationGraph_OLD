@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Button text="Int" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Int" style="-unity-background-image-tint-color: rgba(255, 255, 255, 0); background-color: rgba(188, 188, 188, 0.33);" />
+    <ui:Button text="Float" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Float" style="-unity-background-image-tint-color: rgba(255, 255, 255, 0); background-color: rgba(188, 188, 188, 0.33);" />
+    <ui:Button text="String" parse-escape-sequences="true" display-tooltip-when-elided="true" name="String" style="-unity-background-image-tint-color: rgba(255, 255, 255, 0); background-color: rgba(188, 188, 188, 0.33);" />
+    <ui:Button text="Bool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="bool" style="-unity-background-image-tint-color: rgba(255, 255, 255, 0); background-color: rgba(188, 188, 188, 0.33);" />
+</ui:UXML>

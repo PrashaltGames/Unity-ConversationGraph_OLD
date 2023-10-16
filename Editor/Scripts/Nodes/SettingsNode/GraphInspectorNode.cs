@@ -2,10 +2,13 @@ using Prashalt.Unity.ConversationGraph;
 using Prashalt.Unity.ConversationGraph.Editor;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.UIElements;
+using UnityEngine;
 using UnityEngine.UIElements;
+using PopupWindow = UnityEngine.UIElements.PopupWindow;
 
 #if UNITY_2022_1_OR_NEWER
-#else 
+#else
 using UnityEditor.UIElements;
 #endif
 
@@ -19,8 +22,13 @@ public class GraphInspectorNode : Node
     private IntegerField timeToWaitField;
     private IntegerField animationSpeedField;
 
+    private VisualElement graphSettingsContainer;
+    private VisualElement propertiesContainer;
+
+	private const string propertyPopupElementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/PropertiesPopup";
+
 #if UNITY_2022_1_OR_NEWER
-    private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector.uxml";
+	private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector.uxml";
 #else
     private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector2021.uxml";
 #endif
@@ -31,12 +39,26 @@ public class GraphInspectorNode : Node
         //右上のボタンとinputContainerを消す
         titleButtonContainer.Q<VisualElement>().style.display = DisplayStyle.None;
 
-        //エレメントを追加
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
+		//エレメントを追加
+		var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
         var defaultContainer = visualTree.Instantiate();
         mainContainer.Add(defaultContainer);
 
-        timeToWaitField = defaultContainer.Q<IntegerField>("timeToWait");
+		//上部のボタンの設定
+		var graphSettingsButton = mainContainer.Q<Toolbar>().Q<Button>("graphSettings");
+		var propertiesButton = mainContainer.Q<Toolbar>().Q<Button>("properties");
+
+        graphSettingsButton.RegisterCallback<ClickEvent>(x => OnChangeToSettingsMode(x));
+        propertiesButton.RegisterCallback<ClickEvent>(x => OnChangeToPropertiesMode(x));
+
+        graphSettingsContainer = mainContainer.Q<VisualElement>("graphSettingsContainer");
+        propertiesContainer = mainContainer.Q<VisualElement>("propertiesContainer");
+
+        //Propertiesの設定
+        propertiesContainer.Q<Button>("addButton").RegisterCallback<ClickEvent>(x => OnAddPropertyButton(x));
+
+        //GraphSettingsの設定
+		timeToWaitField = defaultContainer.Q<IntegerField>("timeToWait");
         timeToWaitField.RegisterValueChangedCallback(x => OnChangeTimeToWait(x));
         timeToWaitField.SetValueWithoutNotify(asset.settings.switchingSpeed);
         switchingSpeed = asset.settings.switchingSpeed;
@@ -60,7 +82,8 @@ public class GraphInspectorNode : Node
 
         capabilities &= ~Capabilities.Deletable;
     }
-    public void OnChangeTextAnimationSettings(ChangeEvent<bool> e)
+	#region SettingsMethods
+	public void OnChangeTextAnimationSettings(ChangeEvent<bool> e)
     {
         shouldTextAnimation = e.newValue;
         ChangeStateAnimationSpeedEnable(shouldTextAnimation);
@@ -100,4 +123,37 @@ public class GraphInspectorNode : Node
     {
         animationSpeed = e.newValue;
     }
+    public void OnChangeToSettingsMode(ClickEvent _)
+    {
+		ChangeContainer(true);
+	}
+	public void OnChangeToPropertiesMode(ClickEvent _)
+	{
+        ChangeContainer(false);
+	}
+	#endregion
+	#region PropertiesMethods
+    public void OnAddPropertyButton(ClickEvent _)
+    {
+		var elementAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
+		var element = elementAsset.Instantiate();
+        var popupContainer = new PopupWindow();
+
+        popupContainer.Add(element);
+        popupContainer.text = "追加したい要素を洗濯";
+	}
+	#endregion
+	public void ChangeContainer(bool isSettings)
+    {
+        if(isSettings)
+        {
+			graphSettingsContainer.style.display = DisplayStyle.Flex;
+            propertiesContainer.style.display = DisplayStyle.None;
+		}
+        else
+        {
+			graphSettingsContainer.style.display = DisplayStyle.None;
+			propertiesContainer.style.display = DisplayStyle.Flex;
+		}
+	}
 }
