@@ -31,6 +31,7 @@ In Graph, You write `{PropertyName}`, it replace value.
 
 Also, Bool property can use as Node.
 This node use in Branch Node.
+Click property button in GraphInspector, Create Bool property Node.
 
 ## Custom
 You can create custom components for ConvasationGraph using `ConversationSystemBase`.
@@ -43,3 +44,4 @@ This class provided 3 Events.
 - SpeakerNode : Normal node, enable to set speaker name and text.
 - NarratorNode : SpeakerNode without speaker name.
 - SelectNode : Node for making the branch by options.
+- BranchNode ： Conversation branching by FlagNode(Bool Property Node)
