@@ -1,7 +1,9 @@
 using Cysharp.Threading.Tasks;
 using System;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 {
@@ -147,5 +149,30 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         
 #endif
         }
+        protected string ReflectProperty(string text)
+        {
+            if (text is null || text == "") return "";
+			var Matches = new Regex(@"\{(.+?)\}").Matches(text);
+
+			foreach (Match propertyNameMatch in Matches)
+			{
+                //ê≥ãKï\åªï™Ç©ÇÁÇ»Ç¢ÇÃÇ≈ÅAÉSÉäâüÇ∑
+                var propertyName = propertyNameMatch.Value.Replace("{", "");
+				propertyName = propertyName.Replace("}", "");
+
+				var member = ConversationGraphUtility.ConversationProperties[propertyName];
+                string value = ""; 
+                if(member is PropertyInfo property) 
+                {
+                    value = property.GetValue(null).ToString();
+                }
+                else if(member is FieldInfo field)
+                {
+                    value = field.GetValue(null).ToString();
+                }
+				text = text.Replace($"{{{propertyName}}}", value);
+			}
+            return text;
+		}
     }
 }

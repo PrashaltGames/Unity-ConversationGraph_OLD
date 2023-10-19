@@ -47,13 +47,16 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         {
             if (data.textList == null || data.textList.Count == 0) return;
 
+            var speakerName = ReflectProperty(data.speakerName);
+
             //Update Text
-            speaker.text = data.speakerName;
+            speaker.text = speakerName;
 
             foreach (var text in data.textList)
             {
-                audioSource.Play();
-                mainText.text = text;
+				var reflectPropertyText = ReflectProperty(text);
+				audioSource.Play();
+                mainText.text = reflectPropertyText;
 
                 if (conversationAsset.settings.shouldTextAnimation)
                 {
