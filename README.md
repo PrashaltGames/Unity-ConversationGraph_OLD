@@ -23,6 +23,8 @@ Install this package with UPM.
 3. Use `ConversationSystemUGUI` in Runtime with your Conversation Graph Asset.
 4. Use `StartConvesation` Method in ConversationSystem Component.
 
+**Place End Node! There are not End Node, It cause bug.**
+
 ## Property
 You can use `ConversationProperty`Attribute.
 It is only for static field or property.
@@ -45,3 +47,4 @@ This class provided 3 Events.
 - NarratorNode : SpeakerNode without speaker name.
 - SelectNode : Node for making the branch by options.
 - BranchNode ： Conversation branching by FlagNode(Bool Property Node)
+- EndNode ： 
