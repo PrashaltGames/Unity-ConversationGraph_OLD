@@ -1,11 +1,17 @@
 using Prashalt.Unity.ConversationGraph;
 using Prashalt.Unity.ConversationGraph.Editor;
+using Prashalt.Unity.ConversationGraph.Nodes;
+using Prashalt.Unity.ConversationGraph.Nodes.Property;
+using Prashalt.Unity.ConversationGraph.SourceGenerator.Attributes;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Runtime.Remoting.Contexts;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using PopupWindow = UnityEngine.UIElements.PopupWindow;
 
 #if UNITY_2022_1_OR_NEWER
 #else
@@ -25,8 +31,7 @@ public class GraphInspectorNode : Node
     private VisualElement graphSettingsContainer;
     private VisualElement propertiesContainer;
 
-	private const string propertyPopupElementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/PropertiesPopup";
-
+	private const string propertyButtonElementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/PropertyButton.uxml";
 #if UNITY_2022_1_OR_NEWER
 	private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector.uxml";
 #else
@@ -34,7 +39,7 @@ public class GraphInspectorNode : Node
 #endif
     public GraphInspectorNode(ConversationGraphAsset asset)
     {
-        title = "Graph Inspector";
+		title = "Graph Inspector";
 
         //右上のボタンとinputContainerを消す
         titleButtonContainer.Q<VisualElement>().style.display = DisplayStyle.None;
@@ -54,10 +59,40 @@ public class GraphInspectorNode : Node
         graphSettingsContainer = mainContainer.Q<VisualElement>("graphSettingsContainer");
         propertiesContainer = mainContainer.Q<VisualElement>("propertiesContainer");
 
-        //Propertiesの設定
-        propertiesContainer.Q<Button>("addButton").RegisterCallback<ClickEvent>(x => OnAddPropertyButton(x));
+		//Propertiesの設定
+        var propertyButtonAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(propertyButtonElementPath);
+		var classList = GetHasConversationPropertyClasses(Assembly.Load("Assembly-CSharp"));
+		foreach (var typeInfo in classList)
+		{
+			var properties = GetConversationProperties(typeInfo);
+            var fileds = GetConversationFields(typeInfo);
 
-        //GraphSettingsの設定
+            //TODO: MemberInfoで書き直す
+			foreach (var property in properties)
+			{
+                if(property.GetValue(null) is bool)
+                {
+					GenerateButton(property, propertyButtonAsset, propertiesContainer, true);
+				}
+                else
+                {
+					GenerateButton(property, propertyButtonAsset, propertiesContainer, false);
+				}
+			}
+            foreach(var field in fileds)
+            {
+				if (field.GetValue(null) is bool)
+				{
+					GenerateButton(field, propertyButtonAsset, propertiesContainer, true);
+				}
+				else
+				{
+					GenerateButton(field, propertyButtonAsset, propertiesContainer, false);
+				}
+			}
+		}
+
+		//GraphSettingsの設定
 		timeToWaitField = defaultContainer.Q<IntegerField>("timeToWait");
         timeToWaitField.RegisterValueChangedCallback(x => OnChangeTimeToWait(x));
         timeToWaitField.SetValueWithoutNotify(asset.settings.switchingSpeed);
@@ -133,14 +168,55 @@ public class GraphInspectorNode : Node
 	}
 	#endregion
 	#region PropertiesMethods
-    public void OnAddPropertyButton(ClickEvent _)
+	public static IEnumerable<System.Reflection.TypeInfo> GetHasConversationPropertyClasses(Assembly assembly)
+	{
+		foreach (Type type in assembly.GetTypes())
+		{
+			if (type.GetCustomAttributes(typeof(HasConversationPropertyAttribute), true).Length > 0)
+			{
+				yield return type.GetTypeInfo();
+			}
+		}
+	}
+	public static IEnumerable<PropertyInfo> GetConversationProperties(TypeInfo type)
+	{
+		foreach (PropertyInfo info in type.GetProperties())
+		{
+			if (info.IsDefined(typeof(ConversationPropertyAttribute), true))
+			{
+				yield return info;
+			}
+		}
+	}
+    public static IEnumerable<FieldInfo> GetConversationFields(TypeInfo type)
     {
-		var elementAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
-		var element = elementAsset.Instantiate();
-        var popupContainer = new PopupWindow();
+		foreach (FieldInfo info in type.GetFields())
+		{
+			if (info.IsDefined(typeof(ConversationPropertyAttribute), true))
+			{
+				yield return info;
+			}
+		}
+	}
+    public void GenerateButton(MemberInfo info, VisualTreeAsset propertyButtonAsset, VisualElement container, bool active)
+    {
+		var propertyButton = propertyButtonAsset.Instantiate();
+        var button = propertyButton.Q<Button>();
 
-        popupContainer.Add(element);
-        popupContainer.text = "追加したい要素を洗濯";
+		button.text = info.Name;
+        button.clicked += () => GeneratePropertyNode(info);
+        button.SetEnabled(active);
+
+		container.Add(propertyButton);
+	}
+    public void GeneratePropertyNode(MemberInfo info)
+	{
+        // マウスの位置にノードを追加
+        var node = new FlagNode();
+        node.SetTitle(info.Name);
+		node.Initialize(node.guid, new(10, 10, 10, 10), "");
+        var window = (PrashaltConversationWindow)EditorWindow.GetWindow(typeof(PrashaltConversationWindow));
+        window.convasationGraphView.AddElement(node);
 	}
 	#endregion
 	public void ChangeContainer(bool isSettings)

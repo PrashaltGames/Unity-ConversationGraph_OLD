@@ -93,6 +93,11 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
                 var instance = Activator.CreateInstance(t) as MasterNode;
                 if (instance is null) continue;
+                if(instance is PropertyNode propertyNode)
+                {
+                    var obj = JsonUtility.FromJson<PropertyNode>(nodeData.json);
+                    propertyNode.SetTitle(obj.memberName);
+                }
 
                 AddElement(instance);
                 instance.Initialize(nodeData.guid, nodeData.rect, nodeData.json);

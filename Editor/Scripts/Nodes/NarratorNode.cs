@@ -7,10 +7,10 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Prashalt.Unity.ConversationGraph.Nodes
+namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 {
     [Serializable]
-    public class NarratorNode : MasterNode
+    public class NarratorNode : ConversationNode
     {
         [NonSerialized] protected List<TextField> textFieldList;
         [NonSerialized] protected Button addTextFieldButton;

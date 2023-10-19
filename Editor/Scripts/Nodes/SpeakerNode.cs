@@ -6,7 +6,7 @@ using UnityEditor;
 using Cysharp.Threading.Tasks;
 using Prashalt.Unity.ConversationGraph.Editor;
 
-namespace Prashalt.Unity.ConversationGraph.Nodes
+namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 {
     [Serializable]
     public class SpeakerNode : NarratorNode

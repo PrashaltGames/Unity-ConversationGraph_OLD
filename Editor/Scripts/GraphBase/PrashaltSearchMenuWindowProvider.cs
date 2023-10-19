@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 using Prashalt.Unity.ConversationGraph.Nodes;
+using Prashalt.Unity.ConversationGraph.Nodes.Conversation;
+using Prashalt.Unity.ConversationGraph.Nodes.Logic;
 
 namespace Prashalt.Unity.ConversationGraph.Editor 
 {
@@ -33,6 +35,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 new SearchTreeGroupEntry(new GUIContent("Logic")) { level = 1 },
 
                 new SearchTreeEntry(new GUIContent(nameof(SelectNode))) { level = 2, userData = typeof(SelectNode) },
+                new SearchTreeEntry(new GUIContent(nameof(BranchNode))) { level = 2, userData = typeof(BranchNode)},
 
                 new SearchTreeGroupEntry(new GUIContent("Other")) { level = 1 },
 

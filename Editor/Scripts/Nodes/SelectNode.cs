@@ -7,10 +7,10 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Prashalt.Unity.ConversationGraph.Nodes
+namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 {
     [Serializable]
-    public class SelectNode : MasterNode
+    public class SelectNode : ConversationNode
     {
         [NonSerialized] private List<TextField> selectOptionTextList = new();
         [NonSerialized] private Button addOptionButton;

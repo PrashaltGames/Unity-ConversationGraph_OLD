@@ -9,7 +9,5 @@
         <ui:Toggle label="Text Animation" name="textAnimation" value="true" />
         <ui:IntegerField label="Animation Delay (msec)" value="3000" name="animationSpeed" style="display: flex; overflow: hidden; visibility: visible; width: 100%; justify-content: flex-start; align-items: stretch; flex-direction: row; margin-left: 20px; max-width: none; min-width: auto; margin-right: 4px; -unity-text-align: upper-left;" />
     </ui:VisualElement>
-    <ui:VisualElement name="propertiesContainer" style="flex-grow: 1; min-width: 0; max-width: 500px; height: 100%; width: 300px; display: none;">
-        <ui:Button text="＋" parse-escape-sequences="true" display-tooltip-when-elided="true" name="addButton" style="margin-top: 10px; -unity-font-style: bold; font-size: 14px; max-width: none; justify-content: flex-start; align-self: center; width: 99px; max-height: 20px; border-left-color: rgba(178, 178, 178, 0); border-right-color: rgba(178, 178, 178, 0); border-top-color: rgba(178, 178, 178, 0); border-bottom-color: rgba(178, 178, 178, 0); background-color: rgb(75, 75, 75);" />
-    </ui:VisualElement>
+    <ui:VisualElement name="propertiesContainer" style="flex-grow: 1; min-width: 0; max-width: 500px; height: 100%; width: 300px; display: none; margin-top: 0; margin-right: 10px; margin-bottom: 10px; margin-left: 10px;" />
 </ui:UXML>

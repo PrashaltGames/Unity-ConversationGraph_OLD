@@ -6,7 +6,6 @@ using UnityEngine;
 [Serializable]
 public abstract class MasterNode : Node
 {
-    [SerializeField] protected List<string> textList;
     [NonSerialized] public string guid;
 
     public virtual string ToJson()

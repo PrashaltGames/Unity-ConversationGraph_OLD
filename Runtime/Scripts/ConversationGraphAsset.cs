@@ -93,6 +93,11 @@ namespace Prashalt.Unity.ConversationGraph
         {
             _edges.Clear();
         }
+        public NodeData FindNode(string nodeGuid)
+        {
+			var node = Nodes.First(x => x.guid == nodeGuid.Split(":")[1]);
+            return node;
+		}
 
         public List<NodeData> GetNextNode(NodeData nodeData)
         {
@@ -106,5 +111,5 @@ namespace Prashalt.Unity.ConversationGraph
 
             return result;
         }
-    }
+	}
 }
