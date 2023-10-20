@@ -1,12 +1,13 @@
 using Prashalt.Unity.ConversationGraph;
+using Prashalt.Unity.ConversationGraph.Attributes;
 using Prashalt.Unity.ConversationGraph.Editor;
 using Prashalt.Unity.ConversationGraph.Nodes;
 using Prashalt.Unity.ConversationGraph.Nodes.Property;
-using Prashalt.Unity.ConversationGraph.SourceGenerator.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Remoting.Contexts;
+using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -61,36 +62,11 @@ public class GraphInspectorNode : Node
 
 		//PropertiesÇÃê›íË
         var propertyButtonAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(propertyButtonElementPath);
-		var classList = GetHasConversationPropertyClasses(Assembly.Load("Assembly-CSharp"));
-		foreach (var typeInfo in classList)
-		{
-			var members = GetConversationMembers(typeInfo);
+        foreach(var conversationProperty in ConversationGraphUtility.ConversationProperties)
+        {
+            var isBool = IsMemberInfoTypeBool(conversationProperty.Value);
 
-			foreach (var member in members)
-			{
-                if(member is PropertyInfo property)
-                {
-					if (property.GetValue(null) is bool)
-					{
-						GenerateButton(member, propertyButtonAsset, propertiesContainer, true);
-					}
-					else
-					{
-						GenerateButton(member, propertyButtonAsset, propertiesContainer, false);
-					}
-				}
-                else if(member is FieldInfo field)
-                {
-					if (field.GetValue(null) is bool)
-					{
-						GenerateButton(member, propertyButtonAsset, propertiesContainer, true);
-					}
-					else
-					{
-						GenerateButton(member, propertyButtonAsset, propertiesContainer, false);
-					}
-				}
-			}
+			GenerateButton(conversationProperty.Value, propertyButtonAsset, propertiesContainer, isBool);
 		}
 
 		//GraphSettingsÇÃê›íË
@@ -179,16 +155,32 @@ public class GraphInspectorNode : Node
 			}
 		}
 	}
-    public static IEnumerable<MemberInfo> GetConversationMembers(TypeInfo type)
+    public bool IsMemberInfoTypeBool(MemberInfo member)
     {
-        foreach (MemberInfo info in type.GetMembers())
-        {
-            if (info.IsDefined(typeof(ConversationPropertyAttribute), true))
-            {
-                yield return info;
-            }
-        }
-    }
+		if (member is PropertyInfo property)
+		{
+			if (property.GetValue(null) is bool)
+			{
+				return true;
+			}
+			else
+			{
+                return false;
+			}
+		}
+		else if (member is FieldInfo field)
+		{
+			if (field.GetValue(null) is bool)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+        else { return false; }
+	}
     public void GenerateButton(MemberInfo info, VisualTreeAsset propertyButtonAsset, VisualElement container, bool active)
     {
 		var propertyButton = propertyButtonAsset.Instantiate();

@@ -1,7 +1,8 @@
-using Prashalt.Unity.ConversationGraph.SourceGenerator.Attributes;
+using Prashalt.Unity.ConversationGraph.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 public static class ConversationGraphUtility
 {
@@ -13,21 +14,38 @@ public static class ConversationGraphUtility
 	public static Dictionary<string, MemberInfo> GetAllConversationProperties()
 	{
 		var dic = new Dictionary<string, MemberInfo>();
-		//TODO: アセンブリの種類に対応
-		var classList = GetHasConversationPropertyClasses(Assembly.Load("Assembly-CSharp"));
-		foreach (var typeInfo in classList)
-		{
-			var properties = GetConversationProperties(typeInfo);
 
-			foreach (var info in properties)
+		var targetAssembyName = typeof(ConversationPropertyAttribute).Assembly.GetName().FullName;
+		
+		//アセンブリ一覧を取得
+		foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		{
+			//アセンブリの依存関係を取得
+			var referencedAssemblies = assembly.GetReferencedAssemblies();
+			foreach(var referencedAssemblyName in referencedAssemblies)
 			{
-				dic.Add(info.Name, info);
+				//ConversationPropertyに依存していなかったら飛ばす。
+				if(referencedAssemblyName.FullName != targetAssembyName)
+				{
+					continue;
+				}
+
+				//していたらPropertyを探して一覧に追加
+				var classList = GetHasConversationPropertyClasses(assembly);
+				foreach (var typeInfo in classList)
+				{
+					var properties = GetConversationProperties(typeInfo);
+
+					foreach (var info in properties)
+					{
+						dic.Add(info.Name, info);
+					}
+				}
 			}
 		}
-
 		return dic;
 	}
-	private static IEnumerable<System.Reflection.TypeInfo> GetHasConversationPropertyClasses(Assembly assembly)
+	private static IEnumerable<TypeInfo> GetHasConversationPropertyClasses(Assembly assembly)
 	{
 		foreach (Type type in assembly.GetTypes())
 		{
@@ -37,7 +55,7 @@ public static class ConversationGraphUtility
 			}
 		}
 	}
-	private static IEnumerable<MemberInfo> GetConversationProperties(System.Reflection.TypeInfo type)
+	private static IEnumerable<MemberInfo> GetConversationProperties(TypeInfo type)
 	{
 		foreach (MemberInfo info in type.GetMembers())
 		{
