@@ -17,10 +17,24 @@ Install this package with UPM.
 
 `https://github.com/PrashaltGames/Unity-ConversationGraph.git`
 # How to Use
+## Basic
 1. Make `Conversation Graph Asset` in ProjectWindow.
 2. Create your Conversation using Nodes.
 3. Use `ConversationSystemUGUI` in Runtime with your Conversation Graph Asset.
 4. Use `StartConvesation` Method in ConversationSystem Component.
+
+**Place End Node! There are not End Node, It cause bug.**
+
+## Property
+You can use `ConversationProperty`Attribute.
+It is only for static field or property.
+
+In Graph, You write `{PropertyName}`, it replace value.
+
+Also, Bool property can use as Node.
+This node use in Branch Node.
+Click property button in GraphInspector, Create Bool property Node.
+
 ## Custom
 You can create custom components for ConvasationGraph using `ConversationSystemBase`.
 This class provided 3 Events.
@@ -32,3 +46,5 @@ This class provided 3 Events.
 - SpeakerNode : Normal node, enable to set speaker name and text.
 - NarratorNode : SpeakerNode without speaker name.
 - SelectNode : Node for making the branch by options.
+- BranchNode ： Conversation branching by FlagNode(Bool Property Node)
+- EndNode ： 
