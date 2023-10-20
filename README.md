@@ -7,7 +7,7 @@ Develop by AtsuAtsu0120(X:[@KaidoAtsuya](https://twitter.com/KaidoAtsuya))
 
 In addition, secondary distribution and secondary processing are prohibited, at least until the creator's job search is complete.
 
-## Suppoted
+## Supported
 - Unity 2021 or newer (with .NET Framework)
 - Legacy Input Manager
   - Input System (new) will be suppot maybe.
@@ -34,6 +34,12 @@ In Graph, You write `{PropertyName}`, it replace value.
 Also, Bool property can use as Node.
 This node use in Branch Node.
 Click property button in GraphInspector, Create Bool property Node.
+
+## SubGraph
+It is so easy.
+
+You can drag and drop ConversationGraph Asset in graph.
+It is subgraph.
 
 ## Custom
 You can create custom components for ConvasationGraph using `ConversationSystemBase`.
