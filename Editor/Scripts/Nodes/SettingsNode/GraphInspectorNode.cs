@@ -64,30 +64,31 @@ public class GraphInspectorNode : Node
 		var classList = GetHasConversationPropertyClasses(Assembly.Load("Assembly-CSharp"));
 		foreach (var typeInfo in classList)
 		{
-			var properties = GetConversationProperties(typeInfo);
-            var fileds = GetConversationFields(typeInfo);
+			var members = GetConversationMembers(typeInfo);
 
-            //TODO: MemberInfoÇ≈èëÇ´íºÇ∑
-			foreach (var property in properties)
+			foreach (var member in members)
 			{
-                if(property.GetValue(null) is bool)
+                if(member is PropertyInfo property)
                 {
-					GenerateButton(property, propertyButtonAsset, propertiesContainer, true);
+					if (property.GetValue(null) is bool)
+					{
+						GenerateButton(member, propertyButtonAsset, propertiesContainer, true);
+					}
+					else
+					{
+						GenerateButton(member, propertyButtonAsset, propertiesContainer, false);
+					}
 				}
-                else
+                else if(member is FieldInfo field)
                 {
-					GenerateButton(property, propertyButtonAsset, propertiesContainer, false);
-				}
-			}
-            foreach(var field in fileds)
-            {
-				if (field.GetValue(null) is bool)
-				{
-					GenerateButton(field, propertyButtonAsset, propertiesContainer, true);
-				}
-				else
-				{
-					GenerateButton(field, propertyButtonAsset, propertiesContainer, false);
+					if (field.GetValue(null) is bool)
+					{
+						GenerateButton(member, propertyButtonAsset, propertiesContainer, true);
+					}
+					else
+					{
+						GenerateButton(member, propertyButtonAsset, propertiesContainer, false);
+					}
 				}
 			}
 		}
@@ -178,26 +179,16 @@ public class GraphInspectorNode : Node
 			}
 		}
 	}
-	public static IEnumerable<PropertyInfo> GetConversationProperties(TypeInfo type)
-	{
-		foreach (PropertyInfo info in type.GetProperties())
-		{
-			if (info.IsDefined(typeof(ConversationPropertyAttribute), true))
-			{
-				yield return info;
-			}
-		}
-	}
-    public static IEnumerable<FieldInfo> GetConversationFields(TypeInfo type)
+    public static IEnumerable<MemberInfo> GetConversationMembers(TypeInfo type)
     {
-		foreach (FieldInfo info in type.GetFields())
-		{
-			if (info.IsDefined(typeof(ConversationPropertyAttribute), true))
-			{
-				yield return info;
-			}
-		}
-	}
+        foreach (MemberInfo info in type.GetMembers())
+        {
+            if (info.IsDefined(typeof(ConversationPropertyAttribute), true))
+            {
+                yield return info;
+            }
+        }
+    }
     public void GenerateButton(MemberInfo info, VisualTreeAsset propertyButtonAsset, VisualElement container, bool active)
     {
 		var propertyButton = propertyButtonAsset.Instantiate();
