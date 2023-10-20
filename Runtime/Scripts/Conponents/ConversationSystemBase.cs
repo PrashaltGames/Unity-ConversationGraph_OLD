@@ -167,7 +167,12 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                 var propertyName = propertyNameMatch.Value.Replace("{", "");
 				propertyName = propertyName.Replace("}", "");
 
-				var member = ConversationGraphUtility.ConversationProperties[propertyName];
+				var hasProperty = ConversationGraphUtility.ConversationProperties.TryGetValue(propertyName, out var member);
+                if(!hasProperty)
+                {
+                    Debug.LogError("Property is missing maybe");
+                    continue;
+                }
                 string value = ""; 
                 if(member is PropertyInfo property) 
                 {

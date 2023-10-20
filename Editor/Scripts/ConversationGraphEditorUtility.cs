@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine.UIElements;
 
@@ -38,5 +40,29 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             var next = parent.ElementAt(index + 1);
             target.PlaceInFront(next);
         }
-    }
+        public static string OnChangeTextField(string text)
+		{
+			if (text is null || text == "") return "";
+			var Matches = new Regex(@"\{(.+?)\}").Matches(text);
+
+			foreach (Match propertyNameMatch in Matches)
+			{
+				//ê≥ãKï\åªï™Ç©ÇÁÇ»Ç¢ÇÃÇ≈ÅAÉSÉäâüÇ∑
+				var propertyName = propertyNameMatch.Value.Replace("{", "");
+				propertyName = propertyName.Replace("}", "");
+
+				var hasProperty = ConversationGraphUtility.ConversationProperties.TryGetValue(propertyName, out _);
+				
+                if(hasProperty)
+                {
+					var coloredText = propertyNameMatch.Value.Replace("{", "<color=#4169e1>{");
+					coloredText = coloredText.Replace("}", "}</color>");
+
+                    text = text.Replace(propertyName, coloredText);
+				}
+
+			}
+            return text;
+		}
+	}
 }
