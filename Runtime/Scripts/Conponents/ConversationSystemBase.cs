@@ -18,6 +18,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         public Action OnConversationStartEvent { get; set; }
 
         private bool isLogicMode = false;
+        private bool isLogicEnd = false;
         protected int optionId;
 
         private bool isFinishInit;
@@ -55,11 +56,11 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                 var nodeDataList = conversationAsset.GetNextNode(previousNodeData);
                 if(nodeDataList.Count <= 0)
                 {
-                    Debug.Log("次のノードが取得できませんでした。");
+                    Debug.LogError("次のノードが取得できませんでした。");
                     return;
                 }
                 int nodeCount = 0;
-                Debug.Log(isLogicMode);
+                isLogicEnd = true;
                 foreach (var nodeData in nodeDataList)
                 {
                     //Logic系（Selectは例外的に含む：修正必要かも）の時はその番号のみを再生する
@@ -71,7 +72,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                     }
 
                     var typeName = nodeData.typeName.Split(".")[4];
-                    Debug.Log(typeName);
                     //ノードを分析
                     switch (typeName)
                     {
@@ -85,7 +85,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                             break;
                         //RelayNodeのときは何もしない
                         case "RelayNode":
-							isLogicMode = false;
 							break;
                         //EndNodeのとき
                         default:
@@ -93,10 +92,14 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 							isBusy = false;
 							return;
                     }
+					nodeCount++;
                     previousNodeData = nodeData;
                 }
-                await UniTask.Delay(100);
-            }
+                if(isLogicEnd)
+                {
+                    isLogicMode = false;
+                }
+			}
         }
         private async UniTask OnConversationNode(NodeData nodeData)
         {
@@ -105,12 +108,12 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 			if (nodeData.typeName.Split(".")[5] == "SelectNode")
 			{
 				await OnShowOptionsEvent.Invoke(conversationData);
-				isLogicMode = true;
+                isLogicMode = true;
+                isLogicEnd = false;
 			}
 			else
 			{
 				await OnNodeChangeEvent.Invoke(conversationData);
-				isLogicMode = false;
 			}
 		}
         private void OnLogicNode(NodeData nodeData)
