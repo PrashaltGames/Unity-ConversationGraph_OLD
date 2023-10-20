@@ -57,7 +57,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                     foreach (var nodeData in nodeDataList)
                     {
                         var type = nodeData.typeName.Split(".")[4];
-                        if (type == "EndNode") continue;
+                        if (type == "EndNode" || type == "Logic") continue;
                         var typeLabel = new Label($"{count}.{type}");
 
                         typeLabel.style.fontSize = 15;
