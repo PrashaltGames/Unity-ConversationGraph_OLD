@@ -53,4 +53,4 @@ This class provided 3 Events.
 - NarratorNode : SpeakerNode without speaker name.
 - SelectNode : Node for making the branch by options.
 - BranchNode ： Conversation branching by FlagNode(Bool Property Node)
-- EndNode ： 
+- EndNode ： Indicate the end of a conversation.
