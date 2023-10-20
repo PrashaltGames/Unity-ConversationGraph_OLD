@@ -3,7 +3,6 @@ using Prashalt.Unity.ConversationGraph.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -57,7 +56,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 ShowNodesFromAsset(_window.ConversationGraphAsset);
                 ShowEdgeFromAsset(_window.ConversationGraphAsset);
             }
-            var graphInspector = new GraphInspectorNode(_window.ConversationGraphAsset);
+            var graphInspector = new GraphInspectorNode(_window.ConversationGraphAsset, this);
             AddElement(graphInspector);
 
             //グラフビューの変更を検知する
