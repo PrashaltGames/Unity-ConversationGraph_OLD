@@ -1,3 +1,4 @@
+using Prashalt.Unity.ConversationGraph;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -20,3 +21,8 @@ public struct LogicData
     public List<string> inputNodeGuids;
     public List<string> outputNodeGuids;
 }
+[Serializable]
+public struct SubGraphData
+{
+	public ConversationGraphAsset subGraph;
+} 

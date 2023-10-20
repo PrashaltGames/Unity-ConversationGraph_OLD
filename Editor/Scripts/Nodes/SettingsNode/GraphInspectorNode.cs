@@ -216,7 +216,7 @@ public class GraphInspectorNode : Node
         node.SetTitle(info.Name);
 		node.Initialize(node.guid, new(10, 10, 10, 10), "");
         var window = (PrashaltConversationWindow)EditorWindow.GetWindow(typeof(PrashaltConversationWindow));
-        window.convasationGraphView.AddElement(node);
+        window.conversationGraphView.AddElement(node);
 	}
 	#endregion
 	public void ChangeContainer(bool isSettings)

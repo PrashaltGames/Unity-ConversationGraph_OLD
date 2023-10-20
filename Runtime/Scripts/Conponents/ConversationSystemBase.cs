@@ -46,61 +46,64 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         {
             if (isBusy) return;
             await UniTask.WaitUntil(() => isFinishInit);
-            isBusy = true;
 
-            OnConversationStartEvent?.Invoke();
-            
-            var previousNodeData = conversationAsset.StartNode;
-            while (true)
-            {
-                var nodeDataList = conversationAsset.GetNextNode(previousNodeData);
-                if(nodeDataList.Count <= 0)
-                {
-                    Debug.LogError("次のノードが取得できませんでした。");
-                    return;
-                }
-                int nodeCount = 0;
-                isLogicEnd = true;
-                foreach (var nodeData in nodeDataList)
-                {
-                    //Logic系（Selectは例外的に含む：修正必要かも）の時はその番号のみを再生する
-                    if(isLogicMode && optionId != nodeCount)
-                    {
-                        nodeCount++;
+            await ProccesConversationAsset(conversationAsset);
+        }
+        private async UniTask ProccesConversationAsset(ConversationGraphAsset asset)
+        {
+			isBusy = true;
 
-                        continue;
-                    }
+			OnConversationStartEvent?.Invoke();
 
-                    var typeName = nodeData.typeName.Split(".")[4];
-                    //ノードを分析
-                    switch (typeName)
-                    {
-                        case "Conversation":
-                            await OnConversationNode(nodeData);
-                            break;
-                        case "Logic":
-                            OnLogicNode(nodeData);
-                            break;
-                        case "Property":
-                            break;
-                        //RelayNodeのときは何もしない
-                        case "RelayNode":
+			var previousNodeData = asset.StartNode;
+			while (true)
+			{
+				var nodeDataList = asset.GetNextNode(previousNodeData);
+				if (nodeDataList.Count <= 0)
+				{
+					Debug.LogError("次のノードが取得できませんでした。");
+					return;
+				}
+				int nodeCount = 0;
+				isLogicEnd = true;
+				foreach (var nodeData in nodeDataList)
+				{
+					//Logic系（Selectは例外的に含む：修正必要かも）の時はその番号のみを再生する
+					if (isLogicMode && optionId != nodeCount)
+					{
+						nodeCount++;
+
+						continue;
+					}
+
+					var typeName = nodeData.typeName.Split(".")[4];
+					//ノードを分析
+					switch (typeName)
+					{
+						case "Conversation":
+							await OnConversationNode(nodeData);
 							break;
-                        //EndNodeのとき
-                        default:
+						case "Logic":
+							OnLogicNode(nodeData);
+							break;
+                        case "SubGraphNode":
+                            await OnSubGraphNode(nodeData);
+                            break;
+						//EndNodeのとき
+						case "EndNode":
 							OnConversationFinishedEvent.Invoke();
 							isBusy = false;
 							return;
-                    }
+					}
 					nodeCount++;
-                    previousNodeData = nodeData;
-                }
-                if(isLogicEnd)
-                {
-                    isLogicMode = false;
-                }
+					previousNodeData = nodeData;
+				}
+				if (isLogicEnd)
+				{
+					isLogicMode = false;
+				}
 			}
-        }
+		}
         private async UniTask OnConversationNode(NodeData nodeData)
         {
 			var conversationData = JsonUtility.FromJson<ConversationData>(nodeData.json);
@@ -147,7 +150,13 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 			}
             isLogicMode = true;
 		}
+        public async UniTask OnSubGraphNode(NodeData nodeData)
+        {
+			//データを読み取る。
+			var subGraphData = JsonUtility.FromJson<SubGraphData>(nodeData.json);
 
+            await ProccesConversationAsset(subGraphData.subGraph);
+		}
         protected async UniTask WaitClick()
         {
 #if ENABLE_LEGACY_INPUT_MANAGER

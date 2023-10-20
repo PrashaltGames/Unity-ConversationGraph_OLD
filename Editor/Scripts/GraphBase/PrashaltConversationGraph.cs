@@ -3,6 +3,7 @@ using Prashalt.Unity.ConversationGraph.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         {
             //ScritableObjectから追加する。
             _window = window;
-            _window.convasationGraphView = this;
+            _window.conversationGraphView = this;
 
             // 親のサイズに合わせてGraphViewのサイズを設定
             this.StretchToParentSize();
@@ -40,7 +41,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 SearchWindow.Open(new SearchWindowContext(context.screenMousePosition), menuWindowProvider);
             };
 
-            if (_window.ConvasationGraphAsset is null || _window.ConvasationGraphAsset.Nodes.Count <= 0)
+            if (_window.ConversationGraphAsset is null || _window.ConversationGraphAsset.Nodes.Count <= 0)
             {
                 var startNode = new StartNode();
                 AddElement(startNode);
@@ -52,10 +53,10 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             }
             else
             {
-                ShowNodesFromAsset(_window.ConvasationGraphAsset);
-                ShowEdgeFromAsset(_window.ConvasationGraphAsset);
+                ShowNodesFromAsset(_window.ConversationGraphAsset);
+                ShowEdgeFromAsset(_window.ConversationGraphAsset);
             }
-            var graphInspector = new GraphInspectorNode(_window.ConvasationGraphAsset);
+            var graphInspector = new GraphInspectorNode(_window.ConversationGraphAsset);
             AddElement(graphInspector);
         }
         // GetCompatiblePortsをオーバーライドする
@@ -98,6 +99,11 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                     var obj = JsonUtility.FromJson<PropertyNode>(nodeData.json);
                     propertyNode.SetTitle(obj.memberName);
                 }
+                else if(instance is SubGraphNode subGraphNode)
+                {
+                    var obj = JsonUtility.FromJson<SubGraphNode>(nodeData.json);
+                    subGraphNode.SetSubGraphAsset(obj.subGraph);
+                }
 
                 AddElement(instance);
                 instance.Initialize(nodeData.guid, nodeData.rect, nodeData.json);
@@ -126,6 +132,53 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 previousBaseNode = baseNode;
             }
             
+        }
+        public bool DropSubGraph()
+        {
+            //カーソルがGraph上になかったらスルー
+            if(!contentRect.Contains(Event.current.mousePosition))
+            {
+                return false;
+            }
+
+            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+            //ドラッグ後ならスルー
+            var eventType = Event.current.type;
+            if(eventType != EventType.DragExited)
+            {
+                return false;
+            }
+
+			DragAndDrop.AcceptDrag();
+
+            Event.current.Use();
+
+            var subGraphReferences = DragAndDrop.objectReferences.OfType<ConversationGraphAsset>().ToList();
+            if (subGraphReferences.Count <= 0)
+            {
+                return false;
+            }
+
+            //自分と同じものはSubGraphとしては利用できないように。
+            if (subGraphReferences[0].name == _window.ConversationGraphAsset.name)
+            {
+                return false;
+            }
+            //Nodeを生成
+            var asset = subGraphReferences[0];
+			var subGraphNode = new SubGraphNode();
+			subGraphNode.SetSubGraphAsset(asset);
+
+			// マウスの位置にノードを追加
+			var worldMousePosition = _window.rootVisualElement.ChangeCoordinatesTo(_window.rootVisualElement.parent, GUIUtility.GUIToScreenPoint(Event.current.mousePosition) - _window.position.position);
+			var localMousePosition = contentViewContainer.WorldToLocal(worldMousePosition);
+			var nodePosition = new Rect(localMousePosition, new Vector2(100, 100));
+
+            subGraphNode.Initialize("", nodePosition, "");
+
+			AddElement(subGraphNode);
+
+            return true;
         }
         #endregion
     }
