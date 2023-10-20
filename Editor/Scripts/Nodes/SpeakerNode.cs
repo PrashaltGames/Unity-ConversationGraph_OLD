@@ -19,6 +19,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
         {
             title = "Speaker";
 
+            //e‚ªNarrator‚Ì‚½‚ß‹¤’Ê‰»‚Å‚«‚È‚¢c
             var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
             var template = visualTree.Instantiate();
             mainContainer.Add(template);

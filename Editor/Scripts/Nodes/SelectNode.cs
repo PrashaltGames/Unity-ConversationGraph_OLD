@@ -1,8 +1,6 @@
 using Prashalt.Unity.ConversationGraph.Components;
 using Prashalt.Unity.ConversationGraph.Editor;
 using System;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -12,12 +10,8 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
     [Serializable]
     public class SelectNode : ConversationNode
     {
-        [NonSerialized] private List<TextField> selectOptionTextList = new();
-        [NonSerialized] private VisualElement buttonContainer;
-        [NonSerialized] private TemplateContainer defaultContainer;
-
         private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/SelectNode.uxml";
-        public SelectNode() : base()
+        public SelectNode() : base(elementPath)
         {
             title = "Select";
 
@@ -26,24 +20,15 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             outputPort.portName = "Option1";
             outputContainer.Add(outputPort);
 
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
-            defaultContainer = visualTree.Instantiate();
-            mainContainer.Add(defaultContainer);
-
             var textField = new PrashaltTextFieldButton();
             textField.Q<Label>().text = "Option1 Text";
 			textField.Q<Button>().clicked += () => SelectTextButton(textField);
 			defaultContainer.Add(textField);
 
-            selectOptionTextList.Add(textField.Q<TextField>());
-
-            buttonContainer = mainContainer.Q<VisualElement>("buttonContainer");
+            textFieldList.Add(textField.Q<TextField>());
 
             var addOptionButton = mainContainer.Q<Button>("addButton");
             addOptionButton.clicked += OnAddOptionButton;
-
-            var removeOptionButton = mainContainer.Q<Button>("removeButton");
-            removeOptionButton.clicked += OnRemoveTextButton;
 
 			ConversationGraphEditorUtility.MoveUp(defaultContainer, textField);
 
@@ -64,17 +49,8 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             defaultContainer.Add(textField);
             ConversationGraphEditorUtility.MoveDown(defaultContainer, buttonContainer);
 
-            selectOptionTextList.Add(textField.Q<TextField>());
+            textFieldList.Add(textField.Q<TextField>());
         }
-		public void OnRemoveTextButton()
-		{
-			if (selectOptionTextList.Count - 1 <= 1)
-			{
-				return;
-			}
-			defaultContainer.Remove(selectedTextField);
-			selectOptionTextList.Remove(selectedTextField.Q<TextField>());
-		}
 		public void SelectTextButton(VisualElement element)
 		{
 			if (selectedTextField is not null)
@@ -99,14 +75,14 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
                 {
                     OnAddOptionButton();
                 }
-                selectOptionTextList[i].SetValueWithoutNotify(text);
+                textFieldList[i].SetValueWithoutNotify(text);
                 i++;
             }
         }
         public override string ToJson()
         {
             textList = new();
-            foreach(var textField in selectOptionTextList)
+            foreach(var textField in textFieldList)
             {
                 textList.Add(textField.text);
             }
