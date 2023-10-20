@@ -54,3 +54,4 @@ This class provided 3 Events.
 - SelectNode : Node for making the branch by options.
 - BranchNode ： Conversation branching by FlagNode(Bool Property Node)
 - EndNode ： Indicate the end of a conversation.
+- RelayNode : Use for looping conversation on same node.
