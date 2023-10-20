@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Prashalt.Unity.ConversationGraph
 {
-    [CreateAssetMenu]
+    [CreateAssetMenu(menuName = "ConversationGraph/ConversationGraph")]
     public class ConversationGraphAsset : ScriptableObject
     {
         [SerializeField] private List<NodeData> _nodes;

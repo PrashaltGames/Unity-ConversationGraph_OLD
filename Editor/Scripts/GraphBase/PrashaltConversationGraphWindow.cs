@@ -11,8 +11,8 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 {
     public class PrashaltConversationWindow : EditorWindow
     {
-        public ConversationGraphAsset ConvasationGraphAsset { set; get; }
-        public PrashaltConversationGraph convasationGraphView;
+        public ConversationGraphAsset ConversationGraphAsset { set; get; }
+        public PrashaltConversationGraph conversationGraphView;
 
         public static List<PrashaltConversationWindow> activeWindowList = new();
 
@@ -20,9 +20,13 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
         private const string iconPath = ConversationGraphEditorUtility.packageFilePath + "Editor/Icon/ConversationGraphTab.png";
 
-        public void Open(ConversationGraphAsset convasationGraphAsset)
+		public void OnGUI()
+		{
+			conversationGraphView.DropSubGraph();
+		}
+		public void Open(ConversationGraphAsset convasationGraphAsset)
         {
-            ConvasationGraphAsset = convasationGraphAsset;
+            ConversationGraphAsset = convasationGraphAsset;
 
             isAssetSet = true;
 
@@ -56,7 +60,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 {
                     foreach (var window in activeWindowList)
                     {
-                        if (window.ConvasationGraphAsset.GetInstanceID() == conversationGraphAsset.GetInstanceID())
+                        if (window.ConversationGraphAsset.GetInstanceID() == conversationGraphAsset.GetInstanceID())
                         {
                             window.Focus();
                             return false;
@@ -77,29 +81,29 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         }
         public void OnSave()
         {
-            if (ConvasationGraphAsset is null) return;
+            if (ConversationGraphAsset is null) return;
 
-            ConvasationGraphAsset.ClearNodes();
-            ConvasationGraphAsset.ClearEdges();
+            ConversationGraphAsset.ClearNodes();
+            ConversationGraphAsset.ClearEdges();
 
-            foreach (var node in convasationGraphView.nodes)
+            foreach (var node in conversationGraphView.nodes)
             {
                 if (node is MasterNode masterNode)
                 {
                     var nodeData = ConversationGraphEditorUtility.NodeToData(masterNode);
-                    ConvasationGraphAsset.SaveNode(nodeData);
+                    ConversationGraphAsset.SaveNode(nodeData);
                 }
                 else if(node is GraphInspectorNode graphInspector)
                 {
-                    ConvasationGraphAsset.settings.isNeedClick = graphInspector.isNeedClick;
-                    ConvasationGraphAsset.settings.shouldTextAnimation = graphInspector.shouldTextAnimation;
-                    ConvasationGraphAsset.settings.switchingSpeed = graphInspector.switchingSpeed;
-                    ConvasationGraphAsset.settings.animationSpeed = graphInspector.animationSpeed;
+                    ConversationGraphAsset.settings.isNeedClick = graphInspector.isNeedClick;
+                    ConversationGraphAsset.settings.shouldTextAnimation = graphInspector.shouldTextAnimation;
+                    ConversationGraphAsset.settings.switchingSpeed = graphInspector.switchingSpeed;
+                    ConversationGraphAsset.settings.animationSpeed = graphInspector.animationSpeed;
                 }
             }
 
-            ConvasationGraphAsset.ClearEdges();
-            foreach (var edge in convasationGraphView.edges)
+            ConversationGraphAsset.ClearEdges();
+            foreach (var edge in conversationGraphView.edges)
             {
                 var edgeData = ConversationGraphEditorUtility.EdgeToData(edge);
                 if (edgeData is null) continue;
@@ -126,10 +130,10 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 }
                 edgeData.baseNodeGuid += $":{outputOptionId}";
 
-                ConvasationGraphAsset.SaveEdge(edgeData);
+                ConversationGraphAsset.SaveEdge(edgeData);
             }
 
-            EditorUtility.SetDirty(ConvasationGraphAsset);
+            EditorUtility.SetDirty(ConversationGraphAsset);
             AssetDatabase.SaveAssets();
         }
         private static void CreateNewWindow(ConversationGraphAsset conversationGraphAsset)
