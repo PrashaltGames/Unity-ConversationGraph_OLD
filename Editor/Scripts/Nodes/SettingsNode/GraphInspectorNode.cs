@@ -1,13 +1,10 @@
 using Prashalt.Unity.ConversationGraph;
 using Prashalt.Unity.ConversationGraph.Attributes;
 using Prashalt.Unity.ConversationGraph.Editor;
-using Prashalt.Unity.ConversationGraph.Nodes;
 using Prashalt.Unity.ConversationGraph.Nodes.Property;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.Remoting.Contexts;
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
@@ -26,6 +23,8 @@ public class GraphInspectorNode : Node
     public int switchingSpeed { get; private set; }
     public int animationSpeed { get; private set; }
 
+    public PrashaltConversationGraph GraphView { get; private set; }
+
     private IntegerField timeToWaitField;
     private IntegerField animationSpeedField;
 
@@ -38,7 +37,7 @@ public class GraphInspectorNode : Node
 #else
     private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/GraphInspector2021.uxml";
 #endif
-    public GraphInspectorNode(ConversationGraphAsset asset)
+    public GraphInspectorNode(ConversationGraphAsset asset, PrashaltConversationGraph graphView)
     {
 		title = "Graph Inspector";
 
@@ -93,6 +92,8 @@ public class GraphInspectorNode : Node
         ChangeStateSwitchingSpeedEnable(isNeedClick);
 
         capabilities &= ~Capabilities.Deletable;
+
+        GraphView = graphView;
     }
 	#region SettingsMethods
 	public void OnChangeTextAnimationSettings(ChangeEvent<bool> e)
@@ -197,9 +198,11 @@ public class GraphInspectorNode : Node
         // マウスの位置にノードを追加
         var node = new FlagNode();
         node.SetTitle(info.Name);
-		node.Initialize(node.guid, new(10, 10, 10, 10), "");
-        var window = (PrashaltConversationWindow)EditorWindow.GetWindow(typeof(PrashaltConversationWindow));
-        window.conversationGraphView.AddElement(node);
+		var worldMousePosition = GraphView._window.rootVisualElement.ChangeCoordinatesTo(GraphView._window.rootVisualElement.parent, GUIUtility.GUIToScreenPoint(Event.current.mousePosition) - GraphView._window.position.position);
+		var localMousePosition = GraphView.WorldToLocal(worldMousePosition);
+		var nodePosition = new Rect(localMousePosition, new Vector2(100, 100));
+		node.Initialize(node.guid, nodePosition, "");
+        GraphView.AddElement(node);
 	}
 	#endregion
 	public void ChangeContainer(bool isSettings)
