@@ -2,7 +2,6 @@ using Prashalt.Unity.ConversationGraph.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEngine;
 
 public static class ConversationGraphUtility
 {

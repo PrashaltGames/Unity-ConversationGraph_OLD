@@ -14,7 +14,7 @@ public class ConversationNode : MasterNode
 	[NonSerialized] protected VisualElement selectedTextField;
 	[NonSerialized] protected VisualElement buttonContainer;
 	[NonSerialized] protected TemplateContainer defaultContainer;
-	[NonSerialized] protected List<TextField> textFieldList;
+	[NonSerialized] protected List<TextField> textFieldList = new();
 
 	public ConversationNode(string elementPath)
 	{

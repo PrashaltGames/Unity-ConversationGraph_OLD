@@ -14,6 +14,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
     public class PrashaltConversationGraph : GraphView
     {
         public PrashaltConversationWindow _window;
+        public bool isChanged;
         #region Func_UnityEditor
         public PrashaltConversationGraph(PrashaltConversationWindow window)
         {
@@ -58,6 +59,9 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             }
             var graphInspector = new GraphInspectorNode(_window.ConversationGraphAsset);
             AddElement(graphInspector);
+
+            //グラフビューの変更を検知する
+            graphViewChanged += OnGraphViewChanged;
         }
         // GetCompatiblePortsをオーバーライドする
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
@@ -195,6 +199,15 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 			AddElement(subGraphNode);
 
             return true;
+        }
+        public GraphViewChange OnGraphViewChanged(GraphViewChange e)
+        {
+            if(!isChanged)
+            {
+				_window.titleContent.text = $"{_window.titleContent.text}*";
+                isChanged = true;
+			}
+            return e;
         }
         #endregion
     }

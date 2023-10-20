@@ -22,7 +22,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
 		public void OnGUI()
 		{
-			conversationGraphView.DropSubGraph();
+			conversationGraphView?.DropSubGraph();
 		}
 		public void Open(ConversationGraphAsset convasationGraphAsset)
         {
@@ -49,7 +49,19 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         {
             activeWindowList.Remove(this);
         }
-        [OnOpenAsset()]
+		private void OnDestroy()
+		{
+            if(!conversationGraphView.isChanged)
+            {
+                return;
+            }
+            var shouldSave = EditorUtility.DisplayDialog($"{ConversationGraphAsset.name} - Unsaved Changes Detected", "Do you want to save the changes you made in the Conversation Graph?", "Save", "Discard");
+            if(shouldSave)
+            {
+                OnSave();
+            }
+		}
+		[OnOpenAsset()]
         public static bool OnOpenAsset(int instanceId, int _)
         {
             if (EditorUtility.InstanceIDToObject(instanceId) is ConversationGraphAsset)
@@ -81,7 +93,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         }
         public void OnSave()
         {
-            if (ConversationGraphAsset is null) return;
+            if (ConversationGraphAsset is null || !conversationGraphView.isChanged) return;
 
             ConversationGraphAsset.ClearNodes();
             ConversationGraphAsset.ClearEdges();
@@ -135,6 +147,9 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
             EditorUtility.SetDirty(ConversationGraphAsset);
             AssetDatabase.SaveAssets();
+
+            conversationGraphView.isChanged = false;
+            titleContent.text = titleContent.text.Replace("*", "");
         }
         private static void CreateNewWindow(ConversationGraphAsset conversationGraphAsset)
         {
