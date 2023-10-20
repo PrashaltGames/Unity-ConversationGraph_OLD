@@ -12,34 +12,22 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
     [Serializable]
     public class NarratorNode : ConversationNode
     {
-        [NonSerialized] protected List<TextField> textFieldList;
-		[NonSerialized] private VisualElement buttonContainer;
-		[NonSerialized] protected TemplateContainer defaultContainer;
-
         private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/NarratorNode.uxml";
         
-
-        public NarratorNode()
+        public NarratorNode() : base(elementPath)
         {
             textFieldList = new();
             title = "Narrator";
 
-            //出力ポート
-            var outputPort = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
-            outputPort.portName = "Output";
-            outputContainer.Add(outputPort);
-
-            var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
-            defaultContainer = visualTree.Instantiate();
-            mainContainer.Add(defaultContainer);
+			//出力ポート
+			var outputPort = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
+			outputPort.portName = "Output";
+			outputContainer.Add(outputPort);
 
             buttonContainer = mainContainer.Q<VisualElement>("buttonContainer");
 
             var addTextFieldButton = mainContainer.Q<Button>("addButton");
             addTextFieldButton.clicked += OnAddTextButton;
-
-            var removetextFieldButton = mainContainer.Q<Button>("removeButton");
-            removetextFieldButton.clicked += OnRemoveTextButton;
 
             var textField = mainContainer.Q<PrashaltTextFieldButton>();
             textFieldList.Add(textField.Q<TextField>());
@@ -57,15 +45,6 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 			newTextField.Q<Button>().clicked += () => SelectTextButton(newTextField);
 
 			ConversationGraphEditorUtility.MoveDown(defaultContainer, buttonContainer);
-        }
-        public void OnRemoveTextButton()
-        {
-            if(textFieldList.Count - 1 <= 0)
-            {
-                return;
-            }
-            defaultContainer.Remove(selectedTextField);
-            textFieldList.Remove(selectedTextField.Q<TextField>());
         }
         public void SelectTextButton(VisualElement element)
         {
