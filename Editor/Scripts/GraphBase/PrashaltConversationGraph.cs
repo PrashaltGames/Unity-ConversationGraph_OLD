@@ -97,7 +97,15 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 if(instance is PropertyNode propertyNode)
                 {
                     var obj = JsonUtility.FromJson<PropertyNode>(nodeData.json);
-                    propertyNode.SetTitle(obj.memberName);
+                    if(ConversationGraphUtility.ConversationProperties.TryGetValue(obj.memberName, out _))
+                    {
+						propertyNode.SetTitle(obj.memberName);
+					}
+                    else
+                    {
+                        Debug.LogWarning($"Conversation Property is missing. {obj.memberName}");
+                        continue;
+                    }
                 }
                 else if(instance is SubGraphNode subGraphNode)
                 {
@@ -117,19 +125,27 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             {
                 var baseNodeGuidWithCount = edgeData.baseNodeGuid.Split(":");
                 var targetNodeGuidWithCount = edgeData.targetNodeGuid.Split(":");
-                var baseNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == baseNodeGuidWithCount[0]);
-                var targetNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == targetNodeGuidWithCount[0]);
-                if (baseNode is null || targetNode is null) return;
+                try
+                {
+					var baseNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == baseNodeGuidWithCount[0]);
+					var targetNode = nodes.Select(x => x as MasterNode).FirstOrDefault(x => x.guid == targetNodeGuidWithCount[0]);
 
-                var input = targetNode.inputContainer.Children().Where(x => x is Port).ElementAt(targetNodeGuidWithCount.Length == 1 ? 0 : int.Parse(targetNodeGuidWithCount[1])) as Port;
-                var output = baseNode.outputContainer.Children().Where(x => x is Port).ElementAt(baseNodeGuidWithCount.Length == 1 ? 0 : int.Parse(baseNodeGuidWithCount[1])) as Port;
+					if (baseNode is null || targetNode is null) return;
 
-                var edge = new Edge() { input = input, output = output };
-                edge.input.Connect(edge);
-                edge.output.Connect(edge);
-                Add(edge);
+					var input = targetNode.inputContainer.Children().Where(x => x is Port).ElementAt(targetNodeGuidWithCount.Length == 1 ? 0 : int.Parse(targetNodeGuidWithCount[1])) as Port;
+					var output = baseNode.outputContainer.Children().Where(x => x is Port).ElementAt(baseNodeGuidWithCount.Length == 1 ? 0 : int.Parse(baseNodeGuidWithCount[1])) as Port;
 
-                previousBaseNode = baseNode;
+					var edge = new Edge() { input = input, output = output };
+					edge.input.Connect(edge);
+					edge.output.Connect(edge);
+					Add(edge);
+
+					previousBaseNode = baseNode;
+				}
+                catch (Exception)
+                {
+                    continue;
+                }
             }
             
         }
