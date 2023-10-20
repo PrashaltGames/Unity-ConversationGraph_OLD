@@ -1,9 +1,4 @@
-using Codice.Utils;
-using Prashalt.Unity.ConversationGraph;
-using Prashalt.Unity.ConversationGraph.Nodes;
-using System;
 using UnityEditor.Experimental.GraphView;
-using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace Prashalt.Unity.ConversationGraph.Editor

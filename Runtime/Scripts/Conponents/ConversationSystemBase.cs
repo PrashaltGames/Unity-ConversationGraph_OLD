@@ -3,7 +3,6 @@ using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 {
@@ -51,13 +50,19 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
             OnConversationStartEvent?.Invoke();
             
             var previousNodeData = conversationAsset.StartNode;
-            for (var i = 0; i < conversationAsset.Nodes.Count; i++)
+            while (true)
             {
                 var nodeDataList = conversationAsset.GetNextNode(previousNodeData);
+                if(nodeDataList.Count <= 0)
+                {
+                    Debug.Log("次のノードが取得できませんでした。");
+                    return;
+                }
                 int nodeCount = 0;
+                Debug.Log(isLogicMode);
                 foreach (var nodeData in nodeDataList)
                 {
-                    //Logic系の時はその番号のみを再生する
+                    //Logic系（Selectは例外的に含む：修正必要かも）の時はその番号のみを再生する
                     if(isLogicMode && optionId != nodeCount)
                     {
                         nodeCount++;
@@ -66,6 +71,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                     }
 
                     var typeName = nodeData.typeName.Split(".")[4];
+                    Debug.Log(typeName);
                     //ノードを分析
                     switch (typeName)
                     {
@@ -76,18 +82,20 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                             OnLogicNode(nodeData);
                             break;
                         case "Property":
-                            OnPropertyNode(nodeData);
                             break;
+                        //RelayNodeのときは何もしない
+                        case "RelayNode":
+							isLogicMode = false;
+							break;
                         //EndNodeのとき
                         default:
 							OnConversationFinishedEvent.Invoke();
 							isBusy = false;
 							return;
                     }
-                    nodeCount++;
                     previousNodeData = nodeData;
                 }
-                i += nodeCount;
+                await UniTask.Delay(100);
             }
         }
         private async UniTask OnConversationNode(NodeData nodeData)
@@ -135,10 +143,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
                 optionId = 1;
 			}
             isLogicMode = true;
-		}
-        private void OnPropertyNode(NodeData nodeData)
-        {
-			var data = JsonUtility.FromJson<PropertyData>(nodeData.json);
 		}
 
         protected async UniTask WaitClick()

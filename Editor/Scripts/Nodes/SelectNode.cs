@@ -13,18 +13,13 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
     public class SelectNode : ConversationNode
     {
         [NonSerialized] private List<TextField> selectOptionTextList = new();
-        [NonSerialized] private Button addOptionButton;
+        [NonSerialized] private VisualElement buttonContainer;
         [NonSerialized] private TemplateContainer defaultContainer;
 
         private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/SelectNode.uxml";
         public SelectNode() : base()
         {
             title = "Select";
-
-            // 入力用のポートを作成
-            var inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float)); // 第三引数をPort.Capacity.Multipleにすると複数のポートへの接続が可能になる
-            inputPort.portName = "Input";
-            inputContainer.Add(inputPort); // 入力用ポートはinputContainerに追加する
 
             //出力ポート
             var outputPort = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
@@ -35,16 +30,22 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             defaultContainer = visualTree.Instantiate();
             mainContainer.Add(defaultContainer);
 
-            var textField = new PrashaltTextFiled();
+            var textField = new PrashaltTextFieldButton();
             textField.Q<Label>().text = "Option1 Text";
-            defaultContainer.Add(textField);
+			textField.Q<Button>().clicked += () => SelectTextButton(textField);
+			defaultContainer.Add(textField);
 
             selectOptionTextList.Add(textField.Q<TextField>());
 
-            addOptionButton = mainContainer.Q<Button>("addOptionButton");
+            buttonContainer = mainContainer.Q<VisualElement>("buttonContainer");
+
+            var addOptionButton = mainContainer.Q<Button>("addButton");
             addOptionButton.clicked += OnAddOptionButton;
 
-            ConversationGraphEditorUtility.MoveUp(defaultContainer, textField);
+            var removeOptionButton = mainContainer.Q<Button>("removeButton");
+            removeOptionButton.clicked += OnRemoveTextButton;
+
+			ConversationGraphEditorUtility.MoveUp(defaultContainer, textField);
 
             RefreshExpandedState();
         }
@@ -55,16 +56,38 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             outputPort.portName = $"Option{outputContainer.childCount + 1}";
             outputContainer.Add(outputPort);
 
-            var textField = new PrashaltTextFiled();
+            //入力欄を追加
+            var textField = new PrashaltTextFieldButton();
             textField.Q<Label>().text = $"Option{outputContainer.childCount} Text";
+            textField.Q<Button>().clicked += () => SelectTextButton(textField);
 
             defaultContainer.Add(textField);
-            ConversationGraphEditorUtility.MoveDown(defaultContainer, addOptionButton);
+            ConversationGraphEditorUtility.MoveDown(defaultContainer, buttonContainer);
 
             selectOptionTextList.Add(textField.Q<TextField>());
         }
+		public void OnRemoveTextButton()
+		{
+			if (selectOptionTextList.Count - 1 <= 1)
+			{
+				return;
+			}
+			defaultContainer.Remove(selectedTextField);
+			selectOptionTextList.Remove(selectedTextField.Q<TextField>());
+		}
+		public void SelectTextButton(VisualElement element)
+		{
+			if (selectedTextField is not null)
+			{
+				selectedTextField.style.backgroundColor = Color.gray;
+			}
 
-        public override void Initialize(string guid, Rect rect, string json)
+			selectedTextField = element;
+
+			selectedTextField.style.backgroundColor = Color.green;
+		}
+
+		public override void Initialize(string guid, Rect rect, string json)
         {
             base.Initialize(guid, rect, json);
             var jsonObj = JsonUtility.FromJson<SelectNode>(json);

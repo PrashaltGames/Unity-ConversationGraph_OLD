@@ -104,6 +104,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         protected async UniTask OnShowOptions(ConversationData data)
         {
             int id = 0;
+            isOptionSelected = false;
             foreach(var option in data.textList)
             {
                 var gameObj = Instantiate(optionPrefab, optionObjParent.transform);
