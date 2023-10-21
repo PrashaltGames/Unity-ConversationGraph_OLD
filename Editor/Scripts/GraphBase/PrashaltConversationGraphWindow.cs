@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.Experimental.GraphView;
@@ -51,6 +52,10 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         }
 		private void OnDestroy()
 		{
+            if(conversationGraphView is null)
+            {
+                return;
+            }
             if(!conversationGraphView.isChanged)
             {
                 return;
@@ -100,6 +105,11 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
             foreach (var node in conversationGraphView.nodes)
             {
+                if(CheckPortEmpty(node.inputContainer.Children().Select(x => x as Port)) || 
+                   CheckPortEmpty(node.outputContainer.Children().Select(x => x as Port)))
+                {
+                    Debug.LogWarning("ConversationGraph : There are Empty Port!");
+                }
                 if (node is MasterNode masterNode)
                 {
                     var nodeData = ConversationGraphEditorUtility.NodeToData(masterNode);
@@ -162,6 +172,21 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
             activeWindowList.Add(newWindow);
         }
+        private static bool CheckPortEmpty(IEnumerable<Port> ports)
+        {
+			foreach (Port input in ports)
+			{
+				if (input.connected)
+				{
+					continue;
+				}
+                else
+                {
+                    return true;
+                }
+			}
+            return false;
+		}
     }
 
 }

@@ -14,9 +14,8 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
     {
         private const string elementPath = ConversationGraphEditorUtility.packageFilePath + "Editor/UXML/NarratorNode.uxml";
         
-        public NarratorNode() : base(elementPath)
+        public NarratorNode() : base(elementPath, "Main Text")
         {
-            textFieldList = new();
             title = "Narrator";
 
 			//出力ポート
@@ -24,15 +23,8 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 			outputPort.portName = "Output";
 			outputContainer.Add(outputPort);
 
-            buttonContainer = mainContainer.Q<VisualElement>("buttonContainer");
-
             var addTextFieldButton = mainContainer.Q<Button>("addButton");
             addTextFieldButton.clicked += OnAddTextButton;
-
-            var textField = mainContainer.Q<PrashaltTextFieldButton>();
-            textFieldList.Add(textField.Q<TextField>());
-
-            textField.Q<Button>().clicked += () => SelectTextButton(textField);
         }
         public void OnAddTextButton()
         {
@@ -45,17 +37,6 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 			newTextField.Q<Button>().clicked += () => SelectTextButton(newTextField);
 
 			ConversationGraphEditorUtility.MoveDown(defaultContainer, buttonContainer);
-        }
-        public void SelectTextButton(VisualElement element)
-        {
-            if(selectedTextField is not null)
-            {
-				selectedTextField.style.backgroundColor = Color.gray;
-			}
-
-            selectedTextField = element;
-
-            selectedTextField.style.backgroundColor = Color.green;
         }
 
         public override void Initialize(string guid, Rect rect, string json)
@@ -86,5 +67,5 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             }
             return JsonUtility.ToJson(this);
         }
-    }
+	}
 }
