@@ -16,6 +16,10 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             var visualElement = new VisualElement();
             var asset = target as ConversationGraphAsset;
 
+            if(asset.StartNode == null)
+            {
+                return visualElement;
+            }
             List<NodeData> previousNodeDataList = new() { asset.StartNode };
             var count = 1;
             for (var i = 0; i < asset.Nodes.Count; i++)

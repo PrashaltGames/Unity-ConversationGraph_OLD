@@ -2,10 +2,13 @@ using Prashalt.Unity.ConversationGraph.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
 
 public static class ConversationGraphUtility
 {
 	public static readonly Dictionary<string, MemberInfo> ConversationProperties;
+
+	public const string ERRORMESSAGE = "ConversationGraph : ConversationProperty use only static";
 	static ConversationGraphUtility()
 	{
 		ConversationProperties = GetAllConversationProperties();
@@ -37,7 +40,32 @@ public static class ConversationGraphUtility
 
 					foreach (var info in properties)
 					{
+#if UNITY_EDITOR
+						if(info is FieldInfo field)
+						{
+							if(field.IsStatic)
+							{
+								dic.Add(info.Name, info);
+							}
+							else
+							{
+								Debug.LogError($"{ERRORMESSAGE} : {field.Name}");
+							}
+						}
+						else if (info is PropertyInfo property)
+						{
+							if (property.GetMethod.IsStatic)
+							{
+								dic.Add(info.Name, info);
+							}
+							else
+							{
+								Debug.LogError($"{ERRORMESSAGE} : {property.Name}");
+							}
+						}
+#else
 						dic.Add(info.Name, info);
+#endif
 					}
 				}
 			}

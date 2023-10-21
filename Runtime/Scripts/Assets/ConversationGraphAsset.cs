@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -23,12 +24,11 @@ namespace Prashalt.Unity.ConversationGraph
         {
             get
             {
-                if(Nodes.Count <= 0)
+                if(Nodes == null || Nodes.Count <= 0)
                 {
                     return null;
                 }
-
-                return Nodes.FirstOrDefault(x => x.typeName == "Prashalt.Unity.ConversationGraph.Nodes.StartNode");
+			    return Nodes.FirstOrDefault(x => x.typeName == "Prashalt.Unity.ConversationGraph.Nodes.StartNode");
             }
         }
 

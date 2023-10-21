@@ -2,7 +2,7 @@ using System;
 
 namespace Prashalt.Unity.ConversationGraph.Attributes
 {
-	[AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
 	public class ConversationPropertyAttribute : Attribute
 	{
 
