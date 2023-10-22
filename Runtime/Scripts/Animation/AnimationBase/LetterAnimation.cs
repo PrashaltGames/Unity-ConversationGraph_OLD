@@ -1,5 +1,6 @@
 using MagicTween;
 using TMPro;
+using UnityEngine;
 
 namespace Prashalt.Unity.ConversationGraph.Animation
 {
@@ -34,7 +35,7 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 			isAnimationInit = true;
 			for(var i = 0; i < TextMeshPro.GetCharCount(); i++)
 			{
-				GenerateAnimation(i).SetId(GetType().Name);
+				GenerateAnimation(i).SetId(GetType().Name).SetAutoKill(false);
 			}
 		}
 	}

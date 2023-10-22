@@ -113,11 +113,6 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 }
                 if (node is MasterNode masterNode)
                 {
-                    //アニメーションノードはConversatioNodeに情報が格納されるので無視
-                    if(masterNode is AnimationNode)
-                    {
-                        continue;
-                    }
                     var nodeData = ConversationGraphEditorUtility.NodeToData(masterNode);
                     ConversationGraphAsset.SaveNode(nodeData);
                 }

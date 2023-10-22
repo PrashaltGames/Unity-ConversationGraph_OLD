@@ -3,6 +3,8 @@ using TMPro;
 using Cysharp.Threading.Tasks;
 using Prashalt.Unity.ConversationGraph.Conponents.Base;
 using UnityEngine.UI;
+using Prashalt.Unity.ConversationGraph.Animation;
+using MagicTween;
 
 namespace Prashalt.Unity.ConversationGraph.Conponents
 {
@@ -49,8 +51,8 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 
             var speakerName = ReflectProperty(data.speakerName);
 
-            //Update Text
-            speaker.text = speakerName;
+			//Update Text
+			speaker.text = speakerName;
 
             foreach (var text in data.textList)
             {
@@ -60,28 +62,35 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 
                 if (conversationAsset.settings.shouldTextAnimation)
                 {
-                    mainText.maxVisibleCharacters = 0;
-
                     isSkipText = false;
 
-                    //アニメーション
-                    for (var i = 1; i <= mainText.text.Length; i++)
+                    if(data.animationName != "")
                     {
-                        mainText.maxVisibleCharacters = i;
-                        await UniTask.Delay(conversationAsset.settings.animationSpeed);
+						var animationId = new LetterFadeInAnimation(mainText).AnimationId;
+						Tween.CompleteAll(1);
+					}
+                    else
+                    {
+						mainText.maxVisibleCharacters = 0;
+						//アニメーション
+						for (var i = 1; i <= mainText.text.Length; i++)
+						{
+							mainText.maxVisibleCharacters = i;
+							await UniTask.Delay(conversationAsset.settings.animationSpeed);
 
-                        //クリックしてたら全部にする
-                        if (isSkipText)
-                        {
-                            mainText.maxVisibleCharacters = mainText.text.Length;
-                            isSkipText = false;
-                            break;
-                        }
-                        else
-                        {
-                            isStartAnimation = true;
-                        }
-                    }
+							//クリックしてたら全部にする
+							if (isSkipText)
+							{
+								mainText.maxVisibleCharacters = mainText.text.Length;
+								isSkipText = false;
+								break;
+							}
+							else
+							{
+								isStartAnimation = true;
+							}
+						}
+					}
 
                     isStartAnimation = false;
                 }
