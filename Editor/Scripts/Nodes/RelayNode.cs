@@ -17,7 +17,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 			inputContainer.Add(inputPort);
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
+			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
 			outputPort.portName = "Option1";
 			outputContainer.Add(outputPort);
 		}

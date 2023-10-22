@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Prashalt.Unity.ConversationGraph.Nodes;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -112,6 +113,11 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 }
                 if (node is MasterNode masterNode)
                 {
+                    //アニメーションノードはConversatioNodeに情報が格納されるので無視
+                    if(masterNode is AnimationNode)
+                    {
+                        continue;
+                    }
                     var nodeData = ConversationGraphEditorUtility.NodeToData(masterNode);
                     ConversationGraphAsset.SaveNode(nodeData);
                 }

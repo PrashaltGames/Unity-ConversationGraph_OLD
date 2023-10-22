@@ -11,6 +11,8 @@
         "url": "https://github.com/AtsuAtsu0120"
     },
     "dependencies": {
-        "com.cysharp.unitask": "2.3.3"
+        "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+        "com.unity.entities": "1.0.16",
+        "com.annulusgames.magic-tween": "https://github.com/AnnulusGames/MagicTween.git?path=/MagicTween/Assets/MagicTween"
     }
 }

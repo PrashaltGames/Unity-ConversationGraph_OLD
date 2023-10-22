@@ -47,6 +47,10 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
             if (isBusy) return;
             await UniTask.WaitUntil(() => isFinishInit);
 
+            if(conversationAsset is null)
+            {
+                return;
+            }
             await ProccesConversationAsset(conversationAsset);
         }
         private async UniTask ProccesConversationAsset(ConversationGraphAsset asset)

@@ -1,8 +1,10 @@
+using Prashalt.Unity.ConversationGraph.Animation;
 using Prashalt.Unity.ConversationGraph.Components;
 using Prashalt.Unity.ConversationGraph.Editor;
+using Prashalt.Unity.ConversationGraph.Nodes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -12,6 +14,7 @@ using UnityEngine.UIElements;
 public abstract class ConversationNode : MasterNode
 {
 	[SerializeField] protected List<string> textList;
+	[SerializeField] protected string animationName;
 
 	[NonSerialized] protected VisualElement selectedTextField;
 	[NonSerialized] protected VisualElement buttonContainer;
@@ -20,6 +23,8 @@ public abstract class ConversationNode : MasterNode
 
 	protected string mainText;
 
+	private Port animationPort;
+
 	public ConversationNode(string elementPath, string mainText)
 	{
 		this.mainText = mainText;
@@ -27,6 +32,12 @@ public abstract class ConversationNode : MasterNode
 		var inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(float));
 		inputPort.portName = "Input";
 		inputContainer.Add(inputPort);
+
+		// 入力用のポートを作成
+		animationPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(ConversationAnimation));
+		animationPort.portName = "Animation";
+		animationPort.portColor = Color.red;
+		inputContainer.Add(animationPort);
 
 		//MainContainerをテンプレートからコピー
 		var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
@@ -73,5 +84,16 @@ public abstract class ConversationNode : MasterNode
 			i++;
 			textField.parent.Q<Label>().text = $"{mainText} {i}";
 		}
+	}
+	public override string ToJson()
+	{
+		if(animationPort.connected)
+		{
+			var edge = animationPort.connections.FirstOrDefault();
+
+			var animationNode = edge.output.node as AnimationNode;
+			animationName = animationNode.AnimationName;
+		}
+		return JsonUtility.ToJson(animationName);
 	}
 }
