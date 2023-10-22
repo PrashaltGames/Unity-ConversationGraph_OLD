@@ -8,7 +8,8 @@ Develop by AtsuAtsu0120(X:[@KaidoAtsuya](https://twitter.com/KaidoAtsuya))
 In addition, secondary distribution and secondary processing are prohibited, at least until the creator's job search is complete.
 
 ## Supported
-- Unity 2021 or newer (with .NET Framework)
+- Unity 2022 or newer (with .NET Framework)
+  - Up to v0.7.x, Unity 2021 is also supported.
 - Legacy Input Manager
   - Input System (new) will be suppot maybe.
 - uGUI
