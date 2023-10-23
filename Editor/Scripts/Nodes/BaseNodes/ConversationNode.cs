@@ -55,7 +55,6 @@ public abstract class ConversationNode : MasterNode
 		var removeOptionButton = mainContainer.Q<Button>("removeButton");
 		removeOptionButton.clicked += OnRemoveTextButton;
 
-
 		buttonContainer = mainContainer.Q<VisualElement>("buttonContainer");
 	}
 	public void SelectTextButton(VisualElement element)
@@ -91,7 +90,7 @@ public abstract class ConversationNode : MasterNode
 		{
 			var edge = animationPort.connections.FirstOrDefault();
 
-			var animationNode = edge.output.node as AnimationNode;
+			var animationNode = edge.output.node as AnimationNode<LetterFadeInAnimation>;
 			animationName = animationNode.AnimationName;
 		}
 		return JsonUtility.ToJson(animationName);

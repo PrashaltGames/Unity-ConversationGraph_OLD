@@ -67,7 +67,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
                     if(data.animationName != "")
                     {
 						var animationId = new LetterFadeInAnimation(mainText).AnimationId;
-						Tween.CompleteAll(1);
+                        Tween.CompleteAndKillAll(1);
 					}
                     else
                     {

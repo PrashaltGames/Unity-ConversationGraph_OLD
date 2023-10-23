@@ -1,11 +1,9 @@
 {
-    "name": "PrashaltConvasationGraphRuntime",
+    "name": "ConversationGraph.Animation",
     "rootNamespace": "",
     "references": [
-        "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23",
-        "GUID:41e680d59e756484cacc8901210a1b94",
         "GUID:972ee90f5ba014d89ba7678f3cb2e1af",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
         "GUID:e0cd26848372d4e5c891c569017e11f1"
     ],
     "includePlatforms": [],

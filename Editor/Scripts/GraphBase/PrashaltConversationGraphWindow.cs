@@ -1,5 +1,5 @@
 using Cysharp.Threading.Tasks;
-using Prashalt.Unity.ConversationGraph.Nodes;
+using Prashalt.Unity.ConversationGraph.Animation;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -7,7 +7,6 @@ using UnityEditor.Callbacks;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Prashalt.Unity.ConversationGraph.Editor
 {
@@ -175,12 +174,16 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         }
         private static bool CheckPortEmpty(IEnumerable<Port> ports)
         {
-			foreach (Port input in ports)
+			foreach (Port port in ports)
 			{
-				if (input.connected)
+				if (port.connected)
 				{
 					continue;
 				}
+                else if(port.portType == typeof(ConversationAnimation))
+                {
+                    continue;
+                }
                 else
                 {
                     return true;

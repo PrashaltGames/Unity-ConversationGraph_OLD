@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 
 namespace Prashalt.Unity.ConversationGraph.Animation
-{
+{ 
 	public partial class LetterFadeInAnimation : LetterAnimation
 	{
 		public float animationTime = 0.2f;
