@@ -5,6 +5,7 @@ using Prashalt.Unity.ConversationGraph.Conponents.Base;
 using UnityEngine.UI;
 using Prashalt.Unity.ConversationGraph.Animation;
 using MagicTween;
+using System.Collections.Generic;
 
 namespace Prashalt.Unity.ConversationGraph.Conponents
 {
@@ -20,7 +21,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 
         private AudioSource audioSource;
         private bool isOptionSelected = false;
-        private bool isSkipText = false;
+        private bool isSkipText;
         private bool isStartAnimation = false;
 
         protected override void Start()
@@ -29,6 +30,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
             OnNodeChangeEvent += OnNodeChange;
             OnShowOptionsEvent += OnShowOptions;
             OnConversationFinishedEvent += OnConvasationFinished;
+            OnStartNodeEvent += OnStartNode;
 
             base.Start();
         }
@@ -44,30 +46,58 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         
 #endif
         }
+        private void OnStartNode(ConversationData data)
+        {
+			letterAnimation = GetAnimation(data.animation.name, mainText);
 
+			//animationのプロパティを登録
+			var intIndex = 0;
+			var floatIndex = 0;
+
+			foreach (var info in letterAnimation.GetType().GetFields())
+			{
+				if (info.FieldType == typeof(int))
+				{
+					info.SetValue(letterAnimation, data.animation.intProperties[intIndex]);
+					intIndex++;
+				}
+				else if (info.FieldType == typeof(float))
+				{
+					info.SetValue(letterAnimation, data.animation.floatProperties[floatIndex]);
+					floatIndex++;
+				}
+			}
+		}
         private async UniTask OnNodeChange(ConversationData data)
         {
-            if (data.textList == null || data.textList.Count == 0) return;
+            isSkipText = false;
+			if (data.textList == null || data.textList.Count == 0) return;
 
             var speakerName = ReflectProperty(data.speakerName);
 
-			//Update Text
+			//Update Text => MagicTween内のテキスト更新されない…
 			speaker.text = speakerName;
 
             foreach (var text in data.textList)
             {
 				var reflectPropertyText = ReflectProperty(text);
 				audioSource.Play();
-                mainText.text = reflectPropertyText;
+				//Update Text => MagicTween内のテキスト更新されない…
+				mainText.SetText(reflectPropertyText);
+                mainText.ForceMeshUpdate();
 
                 if (conversationAsset.settings.shouldTextAnimation)
                 {
-                    isSkipText = false;
-
-                    if(data.animationName != "")
+					if (letterAnimation is not null)
                     {
-						var animationId = new LetterFadeInAnimation(mainText).AnimationId;
-                        Tween.CompleteAndKillAll(1);
+                        Debug.Log("Animation");
+
+                        //アニメーションを今の文字列の長さで生成
+                        var tweenList = await letterAnimation.SetAnimation();
+
+                        //アニメーションを再生
+						isStartAnimation = true;
+						await PlayAnimation(tweenList);
 					}
                     else
                     {
@@ -82,7 +112,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 							if (isSkipText)
 							{
 								mainText.maxVisibleCharacters = mainText.text.Length;
-								isSkipText = false;
 								break;
 							}
 							else
@@ -91,7 +120,6 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 							}
 						}
 					}
-
                     isStartAnimation = false;
                 }
                 else
@@ -102,7 +130,7 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
                 if(conversationAsset.settings.isNeedClick)
                 {
                     await WaitClick();
-                }
+				}
                 else
                 {
                     await UniTask.Delay(conversationAsset.settings.switchingSpeed);
@@ -142,6 +170,14 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
             speaker.text = "";
             mainText.text = "";
         }
-    }
-
+		private async UniTask PlayAnimation(List<Tween> animations)
+		{
+			foreach (var animation in animations)
+			{
+				animation.Play();
+			}
+			await UniTask.WaitUntil(() => !animations.Exists(x => x.IsPlaying()) || isSkipText);
+            mainText.ResetCharTweens();   
+		}
+	}
 }

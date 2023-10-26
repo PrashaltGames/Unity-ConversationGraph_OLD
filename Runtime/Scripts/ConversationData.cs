@@ -7,7 +7,7 @@ public struct ConversationData
 {
     public string speakerName;
     public List<string> textList;
-    public string animationName;
+    public AnimationData animation;
 }
 [Serializable]
 public struct PropertyData
@@ -24,4 +24,11 @@ public struct LogicData
 public struct SubGraphData
 {
 	public ConversationGraphAsset subGraph;
-} 
+}
+[Serializable]
+public struct AnimationData
+{
+    public string name;
+    public List<int> intProperties;
+    public List<float> floatProperties;
+}

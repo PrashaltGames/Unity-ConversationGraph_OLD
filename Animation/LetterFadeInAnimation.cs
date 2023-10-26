@@ -1,6 +1,5 @@
 using MagicTween;
 using TMPro;
-using UnityEngine;
 
 namespace Prashalt.Unity.ConversationGraph.Animation
 { 
@@ -11,11 +10,12 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 
 		public LetterFadeInAnimation(TextMeshProUGUI textMeshPro) : base(textMeshPro)
 		{
+			
 		}
 
 		protected override Tween GenerateAnimation(int letterIndex)
 		{
-			var	tween = TextMeshPro.TweenCharColorAlpha(letterIndex, 0, animationTime).SetInvert().SetDelay(letterIndex * delay);
+			var	tween = TextMeshPro.TweenCharColorAlpha(letterIndex, 0, animationTime).SetInvert().SetDelay(letterIndex * delay).SetAutoKill(false);
 			return tween;
 		}
 	}

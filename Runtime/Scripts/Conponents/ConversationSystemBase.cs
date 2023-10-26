@@ -1,7 +1,9 @@
 using Cysharp.Threading.Tasks;
+using Prashalt.Unity.ConversationGraph.Animation;
 using System;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using TMPro;
 using UnityEngine;
 
 namespace Prashalt.Unity.ConversationGraph.Conponents.Base
@@ -16,10 +18,12 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         public Func<ConversationData, UniTask> OnShowOptionsEvent { get; set; }
         public Action OnConversationFinishedEvent { get; set; }
         public Action OnConversationStartEvent { get; set; }
+        public Action<ConversationData> OnStartNodeEvent { get; set; } 
 
         private bool isLogicMode = false;
         private bool isLogicEnd = false;
         protected int optionId;
+        protected ConversationAnimation letterAnimation;
 
         private bool isFinishInit;
 
@@ -60,6 +64,9 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 			OnConversationStartEvent?.Invoke();
 
 			var previousNodeData = asset.StartNode;
+			var startNodeData = JsonUtility.FromJson<ConversationData>(previousNodeData.json);
+            OnStartNodeEvent?.Invoke(startNodeData);
+
 			while (true)
 			{
 				var nodeDataList = asset.GetNextNode(previousNodeData);
@@ -199,5 +206,16 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 			}
             return text;
 		}
-    }
+		//ソースジェネレーターチャンス
+		protected ConversationAnimation GetAnimation(string animationName, TextMeshProUGUI text)
+		{
+			var animation = animationName switch
+			{
+				nameof(LetterFadeInAnimation) => new LetterFadeInAnimation(text),
+				_ => null
+			};
+
+			return animation;
+		}
+	}
 }

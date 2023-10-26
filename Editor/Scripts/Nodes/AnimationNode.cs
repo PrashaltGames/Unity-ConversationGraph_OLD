@@ -6,7 +6,6 @@ using System.Reflection;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEngine.UI.InputField;
 
 namespace Prashalt.Unity.ConversationGraph.Nodes
 {
@@ -21,20 +20,24 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 			title = $"{typeof(T).Name} (Animation)";
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(ConversationAnimation));
+			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(LetterAnimation));
 			outputPort.portName = "Output";
 			outputPort.portColor = Color.red;
 			outputContainer.Add(outputPort);
 
-			AnimationName = nameof(T);		
+			AnimationName = typeof(T).Name;		
 		}
 		public override void Initialize(string guid, Rect rect, string json)
 		{
 			base.Initialize(guid, rect, json);
 			var obj = JsonUtility.FromJson<AnimationNode<T>>(json);
 
-			intProperties = obj.intProperties;
-			floatProperties = obj.floatProperties;
+			if(obj is not null)
+			{
+				intProperties = obj.intProperties;
+				floatProperties = obj.floatProperties;
+			}
+
 
 			//プロパティを指定できるように
 			var fields = typeof(T).GetFields();
@@ -79,6 +82,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 					{
 						label = info.Name
 					};
+					//プロパティの数に対して配列数が少なかったら追加。
 					if(floatProperties.Count - 1 < floatIndex)
 					{
 						floatProperties.Add(0);

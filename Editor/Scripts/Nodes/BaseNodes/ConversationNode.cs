@@ -14,7 +14,7 @@ using UnityEngine.UIElements;
 public abstract class ConversationNode : MasterNode
 {
 	[SerializeField] protected List<string> textList;
-	[SerializeField] protected string animationName;
+	[SerializeField] protected AnimationData animation;
 
 	[NonSerialized] protected VisualElement selectedTextField;
 	[NonSerialized] protected VisualElement buttonContainer;
@@ -91,8 +91,10 @@ public abstract class ConversationNode : MasterNode
 			var edge = animationPort.connections.FirstOrDefault();
 
 			var animationNode = edge.output.node as AnimationNode<LetterFadeInAnimation>;
-			animationName = animationNode.AnimationName;
+			animation.name = animationNode.AnimationName;
+			animation.intProperties = animationNode.intProperties;
+			animation.floatProperties = animationNode.floatProperties;
 		}
-		return JsonUtility.ToJson(animationName);
+		return JsonUtility.ToJson(animation);
 	}
 }

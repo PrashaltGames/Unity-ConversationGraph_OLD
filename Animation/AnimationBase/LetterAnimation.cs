@@ -1,4 +1,6 @@
+using Cysharp.Threading.Tasks;
 using MagicTween;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -7,21 +9,10 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 	public abstract class LetterAnimation : ConversationAnimation
 	{
 		public TextMeshProUGUI TextMeshPro { get; private set; }
-		//キャッシュが出来るようなAnimationプロパティを作っておく
-		public string AnimationId
-		{
-			get
-			{
-				//文字が変更されているもしくはアニメーションが生成されていなかったら生成後に渡す。
-				if (letterCount != TextMeshPro.GetCharCount() || !isAnimationInit)
-				{
-					SetAnimation();
-				}
-				return GetType().Name;
-			}
-		}
-		private bool isAnimationInit;
-		protected int letterCount;
+
+		private static bool isAnimationInit;
+		private static List<Tween> animations = new();
+		protected static int letterCount;
 
 		protected LetterAnimation(TextMeshProUGUI textMeshPro)
 		{
@@ -30,13 +21,33 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 
 		protected abstract Tween GenerateAnimation(int letterIndex);
 
-		private void SetAnimation()
-		{
+		public override async UniTask<List<Tween>> SetAnimation()
+		{	
+			//すでに同じアニメーションがあるなら削除しない。
+			if (letterCount == TextMeshPro.GetCharCount() && isAnimationInit)
+			{
+				return animations;
+			}
+
+			if(isAnimationInit)
+			{
+				//foreach(var animation in animations)
+				//{
+				//	animation.Kill();
+				//}
+				animations.Clear();
+			}
 			isAnimationInit = true;
+
+			TextMeshPro.GetTMPTweenAnimator().Update();
 			for(var i = 0; i < TextMeshPro.GetCharCount(); i++)
 			{
-				GenerateAnimation(i).SetId(GetType().Name).SetAutoKill(false);
+				animations.Add(GenerateAnimation(i));
+				await UniTask.Delay(1);
 			}
+			TextMeshPro.GetTMPTweenAnimator().Update();
+
+			return animations;
 		}
 	}
 }

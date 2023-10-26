@@ -1,5 +1,6 @@
+using Cysharp.Threading.Tasks;
 using MagicTween;
-using TMPro;
+using System.Collections.Generic;
 
 namespace Prashalt.Unity.ConversationGraph.Animation
 {
@@ -9,5 +10,6 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 		{
 			
 		}
+		public abstract UniTask<List<Tween>> SetAnimation();
 	}
 }
