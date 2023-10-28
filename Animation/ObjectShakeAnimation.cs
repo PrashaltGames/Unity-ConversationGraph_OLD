@@ -13,10 +13,10 @@ namespace Packages.com.prashalt.unity.conversationgraph.Animation
 		{
 		}
 
-		public override List<Tween> SetAnimation()
+		public override ConversationAnimation SetAnimation()
 		{
-			Debug.Log(stlength);
-			var list = new List<Tween> { Text.ShakeEulerAnglesZ(stlength, duration).SetAutoKill(false)};
+			var list = new ConversationAnimation();
+			list.Add(Text.ShakeEulerAnglesZ(stlength, duration).SetAutoKill(false));
 			return list;
 		}
 	}

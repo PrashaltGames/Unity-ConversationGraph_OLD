@@ -50,7 +50,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             {
                 foreach (var type in assembly.GetTypes())
                 {
-                    if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(ConversationAnimation)))
+                    if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(ConversationAnimationGenerator)))
                     {
                         var name = type.Name;
                         entries.Add(new SearchTreeEntry(new GUIContent(name)) { level = 2, userData = typeof(AnimationNode<>).MakeGenericType(type)});

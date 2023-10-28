@@ -1,17 +1,14 @@
-using UnityEngine;
-using TMPro;
 using Cysharp.Threading.Tasks;
-using Prashalt.Unity.ConversationGraph.Components.Base;
-using UnityEngine.UI;
 using MagicTween;
-using System.Collections.Generic;
 using Packages.com.prashalt.unity.conversationgraph.Animation;
-using Prashalt.Unity.ConversationGraph.Animation;
-using System;
+using Prashalt.Unity.ConversationGraph.Components.Base;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Prashalt.Unity.ConversationGraph.Components
 {
-    [RequireComponent(typeof(AudioSource))]
+	[RequireComponent(typeof(AudioSource))]
     public class ConversationSystemUGUI : ConversationSystemBase
     {
         [Header("GUI-Text")]
@@ -26,6 +23,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
         private bool isSkipText;
         private bool isStartAnimation = false;
         private bool isWaitClick = false;
+        private new ConversationAnimation animation;
 
         protected override void Start()
         {
@@ -40,7 +38,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
         private void Update()
         {
-            //DI‚Å‘‚«’¼‚µ‚Ä‚à‚¢‚¢‚©‚à
+            //DIã§æ›¸ãç›´ã—ã¦ã‚‚ã„ã„ã‹ã‚‚
 #if ENABLE_LEGACY_INPUT_MANAGER
             if(Input.GetMouseButtonDown(0) && isStartAnimation && !isWaitClick)
             {
@@ -62,7 +60,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
             var speakerName = ReflectProperty(data.speakerName);
 
-			//Update Text => MagicTween“à‚ÌƒeƒLƒXƒgXV‚³‚ê‚È‚¢c
+			//Update Text => MagicTweenå†…ã®ãƒ†ã‚­ã‚¹ãƒˆæ›´æ–°ã•ã‚Œãªã„â€¦
 			speaker.text = speakerName;
 
             foreach (var text in data.textList)
@@ -71,7 +69,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
 				var reflectPropertyText = ReflectProperty(text);
 				audioSource.Play();
-				//Update Text => MagicTween“à‚ÌƒeƒLƒXƒgXV‚³‚ê‚È‚¢c
+				//Update Text => MagicTweenå†…ã®ãƒ†ã‚­ã‚¹ãƒˆæ›´æ–°ã•ã‚Œãªã„â€¦
 				mainText.SetText(reflectPropertyText);
                 mainText.ForceMeshUpdate();
 
@@ -85,7 +83,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
 						var animationNode = conversationAsset.FindNode(data.animationGuid);
 						var animationData = JsonUtility.FromJson<AnimationData>(animationNode.json);
 						var objectAnimation = GetObjectAnimation(animationData, mainText.transform);
-						ObjectAnimation(objectAnimation);
+						PlayObjectAnimation(objectAnimation);
 					}
 
 					isStartAnimation = false;
@@ -100,6 +98,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
                     isWaitClick = true;
                     await WaitClick();
                     DelayEnableSkip();
+                    animation?.Puase();
 				}
                 else
                 {
@@ -118,8 +117,8 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
                 gameObj.GetComponentInChildren<TextMeshProUGUI>().text = option;
 
-                //’lŒ^‚Ì‚Í‚¸‚È‚Ì‚ÉAV‚µ‚¢•Ï”‚ÉŠi”[‚µ‚Ä‚©‚çAddListener‚µ‚È‚¢‚Æ‚È‚º‚©‘S‚Ä’l‚ª‚Q‚É‚È‚éiQÆŒ^‚İ‚½‚¢‚È“®ì‚ğ‚·‚éBj
-                //‚±‚ê‚ÍÀs‚Ì’l‚ÅÀs‚³‚ê‚é‚©‚çB‚»‚è‚á‚»‚¤
+                //å€¤å‹ã®ã¯ãšãªã®ã«ã€æ–°ã—ã„å¤‰æ•°ã«æ ¼ç´ã—ã¦ã‹ã‚‰AddListenerã—ãªã„ã¨ãªãœã‹å…¨ã¦å€¤ãŒï¼’ã«ãªã‚‹ï¼ˆï¼å‚ç…§å‹ã¿ãŸã„ãªå‹•ä½œã‚’ã™ã‚‹ã€‚ï¼‰
+                //ã“ã‚Œã¯å®Ÿè¡Œæ™‚ã®å€¤ã§å®Ÿè¡Œã•ã‚Œã‚‹ã‹ã‚‰ã€‚ãã‚Šã‚ƒãã†
                 int optionId = id;
                 gameObj.GetComponent<Button>().onClick.AddListener(() => OnSelectOptionButton(optionId));
                 id++;
@@ -141,37 +140,34 @@ namespace Prashalt.Unity.ConversationGraph.Components
             speaker.text = "";
             mainText.text = "";
         }
-		private async UniTask PlayAnimation(List<Tween> animations)
+		private async UniTask PlayLetterAnimation(ConversationAnimation animations)
 		{
-			foreach (var animation in animations)
-			{
-				animation.Play();
-			}
+            animations.Play();
             isStartAnimation = true;
 
-			await UniTask.WaitUntil(() => !animations.Exists(x => x.IsPlaying()) || isSkipText);
+			await UniTask.WaitUntil(() => !animations.IsPlaying || isSkipText);
 			mainText.ResetCharTweens();
 		}
         public async UniTask LetterAnimation()
         {
 			if (letterAnimation is not null)
 			{
-				//ƒAƒjƒ[ƒVƒ‡ƒ“‚ğ¡‚Ì•¶š—ñ‚Ì’·‚³‚Å¶¬
-				var tweenList = letterAnimation.SetAnimation();
+				//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’ä»Šã®æ–‡å­—åˆ—ã®é•·ã•ã§ç”Ÿæˆ
+				var conversationAnimation = letterAnimation.SetAnimation();
 
-				//ƒAƒjƒ[ƒVƒ‡ƒ“‚ğÄ¶
-				await PlayAnimation(tweenList);
+				//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å†ç”Ÿ
+				await PlayLetterAnimation(conversationAnimation);
 			}
 			else
 			{
 				mainText.maxVisibleCharacters = 0;
-				//ƒAƒjƒ[ƒVƒ‡ƒ“
+				//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
 				for (var i = 1; i <= mainText.text.Length; i++)
 				{
 					mainText.maxVisibleCharacters = i;
 					await UniTask.Delay(conversationAsset.settings.animationSpeed);
 
-					//ƒNƒŠƒbƒN‚µ‚Ä‚½‚ç‘S•”‚É‚·‚é
+					//ã‚¯ãƒªãƒƒã‚¯ã—ã¦ãŸã‚‰å…¨éƒ¨ã«ã™ã‚‹
 					if (isSkipText)
 					{
 						mainText.maxVisibleCharacters = mainText.text.Length;
@@ -184,10 +180,10 @@ namespace Prashalt.Unity.ConversationGraph.Components
 				}
 			}
 		}
-        public void ObjectAnimation(ObjectAnimation animation)
+        public void PlayObjectAnimation(ObjectAnimation objectAnimationGenerator)
         {
-            var animations = animation.SetAnimation();
-            animations[0].Play();
+            animation = objectAnimationGenerator.SetAnimation();
+            animation.Play();
         }
         public async void DelayEnableSkip()
         {

@@ -180,7 +180,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 				{
 					continue;
 				}
-                else if(port.portType == typeof(ConversationAnimation))
+                else if(port.portType == typeof(ConversationAnimationGenerator))
                 {
                     continue;
                 }

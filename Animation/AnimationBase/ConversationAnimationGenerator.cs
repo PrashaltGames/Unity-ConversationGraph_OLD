@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 namespace Prashalt.Unity.ConversationGraph.Animation
 {
-	public abstract class ConversationAnimation
+	public abstract class ConversationAnimationGenerator
 	{
-		protected ConversationAnimation()
+		protected ConversationAnimationGenerator()
 		{
 			
 		}
-		public abstract List<Tween> SetAnimation();
+		public abstract ConversationAnimation SetAnimation();
 	}
 }

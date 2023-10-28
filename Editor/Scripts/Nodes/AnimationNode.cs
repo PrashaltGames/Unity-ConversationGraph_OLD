@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 namespace Prashalt.Unity.ConversationGraph.Nodes
 {
 	[Serializable]
-	public class AnimationNode<T> : MasterNode where T : ConversationAnimation
+	public class AnimationNode<T> : MasterNode where T : ConversationAnimationGenerator
 	{
 		[SerializeField] private List<int> intProperties = new();
 		[SerializeField] private List<float> floatProperties = new();
@@ -20,7 +20,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 			title = $"{typeof(T).Name} (Animation)";
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(T).BaseType);
+			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(T));
 			outputPort.portName = "Output";
 			outputPort.portColor = Color.red;
 			outputContainer.Add(outputPort);

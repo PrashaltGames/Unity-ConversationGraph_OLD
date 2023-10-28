@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Packages.com.prashalt.unity.conversationgraph.Animation
 {
-	public abstract class ObjectAnimation : ConversationAnimation
+	public abstract class ObjectAnimation : ConversationAnimationGenerator
 	{
 		protected ObjectAnimation(Transform text)
 		{

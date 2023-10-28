@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Prashalt.Unity.ConversationGraph.Animation
 {
-	public abstract class LetterAnimation : ConversationAnimation
+	public abstract class LetterAnimation : ConversationAnimationGenerator
 	{
 		protected LetterAnimation(TextMeshProUGUI textMeshPro)
 		{
@@ -16,17 +16,17 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 		public TextMeshProUGUI TextMeshPro { get; private set; }
 
 		private static bool isAnimationInit;
-		private static List<Tween> animations = new();
+		private static ConversationAnimation conversationAnimation = new();
 		protected static int letterCount;
 
-		protected abstract Tween GenerateAnimation(int letterIndex);
+		protected abstract ConversationAnimation GenerateAnimation(int letterIndex);
 
-		public override List<Tween> SetAnimation()
+		public override ConversationAnimation SetAnimation()
 		{	
 			//すでに同じアニメーションがあるなら削除しない。
 			if (letterCount == TextMeshPro.GetCharCount() && isAnimationInit)
 			{
-				return animations;
+				return conversationAnimation;
 			}
 
 			if(isAnimationInit)
@@ -35,18 +35,18 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 				//{
 				//	animation.Kill();
 				//}
-				animations.Clear();
+				conversationAnimation.Clear();
 			}
 			isAnimationInit = true;
 
 			TextMeshPro.GetTMPTweenAnimator().Update();
 			for(var i = 0; i < TextMeshPro.GetCharCount(); i++)
 			{
-				animations.Add(GenerateAnimation(i));
+				conversationAnimation.Add(GenerateAnimation(i));
 			}
 			TextMeshPro.GetTMPTweenAnimator().Update();
 
-			return animations;
+			return conversationAnimation;
 		}
 	}
 }

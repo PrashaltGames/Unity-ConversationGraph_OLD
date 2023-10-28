@@ -24,7 +24,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
         private bool isLogicMode = false;
         private bool isLogicEnd = false;
         protected int optionId;
-        protected ConversationAnimation letterAnimation;
+        protected ConversationAnimationGenerator letterAnimation;
 
         private bool isFinishInit;
 
@@ -214,6 +214,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
 			var animation = animationData.animationName switch
 			{
 				nameof(LetterFadeInAnimation) => new LetterFadeInAnimation(text),
+				nameof(LetterFadeInOffsetYAnimation) => new LetterFadeInOffsetYAnimation(text),
 				_ => null
 			};
 
@@ -231,7 +232,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
 			SetAnimationProperty(animationData, animation);
 			return animation;
 		}
-		private void SetAnimationProperty(AnimationData animationData, ConversationAnimation animation)
+		private void SetAnimationProperty(AnimationData animationData, ConversationAnimationGenerator animation)
 		{
 			//animationのプロパティを登録
 			var intIndex = 0;
