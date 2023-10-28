@@ -1,12 +1,15 @@
-using UnityEngine;
-using TMPro;
 using Cysharp.Threading.Tasks;
-using Prashalt.Unity.ConversationGraph.Conponents.Base;
+using MagicTween;
+using Packages.com.prashalt.unity.conversationgraph.Animation;
+using Prashalt.Unity.ConversationGraph.Components.Base;
+using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.InputSystem.InputAction;
 
-namespace Prashalt.Unity.ConversationGraph.Conponents
+namespace Prashalt.Unity.ConversationGraph.Components
 {
-    [RequireComponent(typeof(AudioSource))]
+	[RequireComponent(typeof(AudioSource))]
     public class ConversationSystemUGUI : ConversationSystemBase
     {
         [Header("GUI-Text")]
@@ -16,84 +19,96 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
         [SerializeField] private GameObject optionObjParent;
         [SerializeField] private GameObject optionPrefab;
 
+
         private AudioSource audioSource;
         private bool isOptionSelected = false;
-        private bool isSkipText = false;
+        private bool isSkipText;
         private bool isStartAnimation = false;
+        private bool isWaitClick = false;
+        private new ConversationAnimation animation;
 
-        protected override void Start()
+		protected override void Start()
         {
             audioSource = GetComponent<AudioSource>();
             OnNodeChangeEvent += OnNodeChange;
             OnShowOptionsEvent += OnShowOptions;
             OnConversationFinishedEvent += OnConvasationFinished;
+            OnStartNodeEvent += OnStartNode;
 
             base.Start();
+
+#if ENABLE_INPUT_SYSTEM
+            var action = new ConversationAction();
+            action.Enable();
+            action.ClickAction.Click.performed += OnClick;
+#endif
         }
 
         private void Update()
         {
+            //DIで書き直してもいいかも
 #if ENABLE_LEGACY_INPUT_MANAGER
-            if(Input.GetMouseButtonDown(0) && isStartAnimation)
+            if (Input.GetMouseButtonDown(0) && isStartAnimation && !isWaitClick)
             {
                 isSkipText = true;
             }
-#elif ENABLE_INPUT_SYSTEM
-        
 #endif
         }
-
+        private void OnStartNode(ConversationData data)
+        {
+			var animationNode = conversationAsset.FindNode(data.animationGuid);
+			var animationData = JsonUtility.FromJson<AnimationData>(animationNode.json);
+			letterAnimation = GetLetterAnimation(animationData, mainText);
+		}
         private async UniTask OnNodeChange(ConversationData data)
         {
-            if (data.textList == null || data.textList.Count == 0) return;
+			if (data.textList == null || data.textList.Count == 0) return;
 
             var speakerName = ReflectProperty(data.speakerName);
 
-            //Update Text
-            speaker.text = speakerName;
+			//Update Text => MagicTween内のテキスト更新されない…
+			speaker.text = speakerName;
+
+            //履歴に追加
+            textHistory.Add(data);
 
             foreach (var text in data.textList)
             {
+				isSkipText = false;
+
 				var reflectPropertyText = ReflectProperty(text);
 				audioSource.Play();
-                mainText.text = reflectPropertyText;
+				//Update Text => MagicTween内のテキスト更新されない…
+				mainText.SetText(reflectPropertyText);
+                mainText.ForceMeshUpdate();
 
                 if (conversationAsset.settings.shouldTextAnimation)
                 {
-                    mainText.maxVisibleCharacters = 0;
+					// LetterAnimation
+					await LetterAnimation();
 
-                    isSkipText = false;
+					if (data.animationGuid != "" && data.animationGuid is not null)
+					{
+						var animationNode = conversationAsset.FindNode(data.animationGuid);
+						var animationData = JsonUtility.FromJson<AnimationData>(animationNode.json);
+						var objectAnimation = GetObjectAnimation(animationData, mainText.transform);
+						PlayObjectAnimation(objectAnimation);
+					}
 
-                    //�A�j���[�V����
-                    for (var i = 1; i <= mainText.text.Length; i++)
-                    {
-                        mainText.maxVisibleCharacters = i;
-                        await UniTask.Delay(conversationAsset.settings.animationSpeed);
-
-                        //�N���b�N���Ă���S���ɂ���
-                        if (isSkipText)
-                        {
-                            mainText.maxVisibleCharacters = mainText.text.Length;
-                            isSkipText = false;
-                            break;
-                        }
-                        else
-                        {
-                            isStartAnimation = true;
-                        }
-                    }
-
-                    isStartAnimation = false;
+					isStartAnimation = false;
                 }
                 else
                 {
                     mainText.maxVisibleCharacters = mainText.text.Length;
                 }
-                
+
                 if(conversationAsset.settings.isNeedClick)
                 {
+                    isWaitClick = true;
                     await WaitClick();
-                }
+                    DelayEnableSkip();
+                    animation?.Puase();
+				}
                 else
                 {
                     await UniTask.Delay(conversationAsset.settings.switchingSpeed);
@@ -111,7 +126,8 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
 
                 gameObj.GetComponentInChildren<TextMeshProUGUI>().text = option;
 
-                //�l�^�̂͂��Ȃ̂ɁA�V�����ϐ��Ɋi�[���Ă���AddListener���Ȃ��ƂȂ����S�Ēl���Q�ɂȂ�i���Q�ƌ^�݂����ȓ��������B�j
+                //値型のはずなのに、新しい変数に格納してからAddListenerしないとなぜか全て値が２になる（＝参照型みたいな動作をする。）
+                //これは実行時の値で実行されるから。そりゃそう
                 int optionId = id;
                 gameObj.GetComponent<Button>().onClick.AddListener(() => OnSelectOptionButton(optionId));
                 id++;
@@ -133,6 +149,64 @@ namespace Prashalt.Unity.ConversationGraph.Conponents
             speaker.text = "";
             mainText.text = "";
         }
-    }
+		private async UniTask PlayLetterAnimation(ConversationAnimation animations)
+		{
+            animations.Play();
+            isStartAnimation = true;
 
+			await UniTask.WaitUntil(() => !animations.IsPlaying || isSkipText);
+			mainText.ResetCharTweens();
+		}
+        public async UniTask LetterAnimation()
+        {
+			if (letterAnimation is not null)
+			{
+				//アニメーションを今の文字列の長さで生成
+				var conversationAnimation = letterAnimation.SetAnimation();
+
+				//アニメーションを再生
+				await PlayLetterAnimation(conversationAnimation);
+			}
+			else
+			{
+				mainText.maxVisibleCharacters = 0;
+				//アニメーション
+				for (var i = 1; i <= mainText.text.Length; i++)
+				{
+					mainText.maxVisibleCharacters = i;
+					await UniTask.Delay(conversationAsset.settings.animationSpeed);
+
+					//クリックしてたら全部にする
+					if (isSkipText)
+					{
+						mainText.maxVisibleCharacters = mainText.text.Length;
+						break;
+					}
+					else
+					{
+						isStartAnimation = true;
+					}
+				}
+			}
+		}
+        public void PlayObjectAnimation(ObjectAnimation objectAnimationGenerator)
+        {
+            animation = objectAnimationGenerator.SetAnimation();
+            animation.Play();
+        }
+        public async void DelayEnableSkip()
+        {
+            await UniTask.Delay(200);
+            isWaitClick = false;
+        }
+#if ENABLE_INPUT_SYSTEM
+        private void OnClick(CallbackContext _)
+        {
+			if (isStartAnimation && !isWaitClick)
+			{
+				isSkipText = true;
+			}
+		}
+#endif
+    }
 }

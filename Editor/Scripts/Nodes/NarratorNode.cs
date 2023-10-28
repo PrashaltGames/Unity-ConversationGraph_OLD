@@ -19,7 +19,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             title = "Narrator";
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
+			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
 			outputPort.portName = "Output";
 			outputContainer.Add(outputPort);
 
@@ -60,6 +60,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
         }
         public override string ToJson()
         {
+            base.ToJson();
             textList = new();
             foreach ( var item in textFieldList )
             {

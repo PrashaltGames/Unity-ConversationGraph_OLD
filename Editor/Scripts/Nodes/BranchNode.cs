@@ -1,9 +1,6 @@
-using Codice.CM.Client.Differences;
 using System;
-using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Windows;
 
 namespace Prashalt.Unity.ConversationGraph.Nodes.Logic
 {
@@ -24,13 +21,12 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Logic
 			boolPort.portColor = Color.magenta;
 			inputContainer.Add(boolPort); // 入力用ポートはinputContainerに追加する
 
-
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
+			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
 			outputPort.portName = "True";
 			outputContainer.Add(outputPort);
 
-			var outputPort1 = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
+			var outputPort1 = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
 			outputPort1.portName = "False";
 			outputContainer.Add(outputPort1);
 		}

@@ -1,10 +1,14 @@
 using Cysharp.Threading.Tasks;
+using Packages.com.prashalt.unity.conversationgraph.Animation;
+using Prashalt.Unity.ConversationGraph.Animation;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using TMPro;
 using UnityEngine;
 
-namespace Prashalt.Unity.ConversationGraph.Conponents.Base
+namespace Prashalt.Unity.ConversationGraph.Components.Base
 {
     public abstract class ConversationSystemBase : MonoBehaviour
     {
@@ -16,12 +20,23 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
         public Func<ConversationData, UniTask> OnShowOptionsEvent { get; set; }
         public Action OnConversationFinishedEvent { get; set; }
         public Action OnConversationStartEvent { get; set; }
+        public Action<ConversationData> OnStartNodeEvent { get; set; }
 
-        private bool isLogicMode = false;
+		public IReadOnlyList<ConversationData> TextHistory
+		{
+			get
+			{
+				return textHistory;
+			}
+		}
+
+		private bool isLogicMode = false;
         private bool isLogicEnd = false;
         protected int optionId;
+        protected ConversationAnimationGenerator letterAnimation;
+		protected List<ConversationData> textHistory = new();
 
-        private bool isFinishInit;
+		private bool isFinishInit;
 
         protected virtual void Start()
         {
@@ -47,6 +62,10 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
             if (isBusy) return;
             await UniTask.WaitUntil(() => isFinishInit);
 
+            if(conversationAsset is null)
+            {
+                return;
+            }
             await ProccesConversationAsset(conversationAsset);
         }
         private async UniTask ProccesConversationAsset(ConversationGraphAsset asset)
@@ -56,6 +75,9 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 			OnConversationStartEvent?.Invoke();
 
 			var previousNodeData = asset.StartNode;
+			var startNodeData = JsonUtility.FromJson<ConversationData>(previousNodeData.json);
+            OnStartNodeEvent?.Invoke(startNodeData);
+
 			while (true)
 			{
 				var nodeDataList = asset.GetNextNode(previousNodeData);
@@ -195,5 +217,51 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 			}
             return text;
 		}
-    }
+
+		//ソースジェネレーターチャンス
+		protected LetterAnimation GetLetterAnimation(AnimationData animationData, TextMeshProUGUI text)
+		{
+			var animation = animationData.animationName switch
+			{
+				nameof(LetterFadeInAnimation) => new LetterFadeInAnimation(text),
+				nameof(LetterFadeInOffsetYAnimation) => new LetterFadeInOffsetYAnimation(text),
+				_ => null
+			};
+
+			SetAnimationProperty(animationData, animation);
+			return animation;
+		}
+        protected ObjectAnimation GetObjectAnimation(AnimationData animationData, Transform text)
+        {
+			var animation = animationData.animationName switch
+			{
+				nameof(ObjectShakeAnimation) => new ObjectShakeAnimation(text),
+				_ => null
+			};
+
+			SetAnimationProperty(animationData, animation);
+			return animation;
+		}
+		private void SetAnimationProperty(AnimationData animationData, ConversationAnimationGenerator animation)
+		{
+			//animationのプロパティを登録
+			var intIndex = 0;
+			var floatIndex = 0;
+
+			foreach (var info in animation.GetType().GetFields())
+			{
+				if (info.FieldType == typeof(int))
+				{
+					info.SetValue(animation, animationData.intProperties[intIndex]);
+					intIndex++;
+				}
+				else if (info.FieldType == typeof(float))
+				{
+					info.SetValue(animation, animationData.floatProperties[floatIndex]);
+					floatIndex++;
+				}
+			}
+		}
+	}
+
 }

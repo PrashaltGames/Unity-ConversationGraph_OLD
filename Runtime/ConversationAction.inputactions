@@ -1,0 +1,34 @@
+{
+    "name": "ConversationAction",
+    "maps": [
+        {
+            "name": "ClickAction",
+            "id": "72a1c6cb-caca-44ad-953f-e5c91988c565",
+            "actions": [
+                {
+                    "name": "Click",
+                    "type": "Button",
+                    "id": "02b34ebc-c21e-45fa-aa93-f1179f7319b5",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "fad021a0-911e-409b-a8ef-d3e837c36e75",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Click",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

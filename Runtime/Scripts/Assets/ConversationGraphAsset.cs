@@ -95,8 +95,16 @@ namespace Prashalt.Unity.ConversationGraph
         }
         public NodeData FindNode(string nodeGuid)
         {
-			var node = Nodes.First(x => x.guid == nodeGuid.Split(":")[1]);
-            return node;
+            NodeData result;
+            if(nodeGuid.Contains(":"))
+            {
+				result = Nodes.First(x => x.guid == nodeGuid.Split(":")[1]);
+			}
+            else
+            {
+                result = Nodes.First(x => x.guid == nodeGuid);
+			}
+            return result;
 		}
 
         public List<NodeData> GetNextNode(NodeData nodeData)

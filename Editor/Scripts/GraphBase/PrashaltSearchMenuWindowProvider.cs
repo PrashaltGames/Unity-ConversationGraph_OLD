@@ -7,6 +7,7 @@ using UnityEngine.UIElements;
 using Prashalt.Unity.ConversationGraph.Nodes;
 using Prashalt.Unity.ConversationGraph.Nodes.Conversation;
 using Prashalt.Unity.ConversationGraph.Nodes.Logic;
+using Prashalt.Unity.ConversationGraph.Animation;
 
 namespace Prashalt.Unity.ConversationGraph.Editor 
 {
@@ -35,14 +36,27 @@ namespace Prashalt.Unity.ConversationGraph.Editor
 
                 new SearchTreeGroupEntry(new GUIContent("Logic")) { level = 1 },
 
-                new SearchTreeEntry(new GUIContent(nameof(BranchNode))) { level = 2, userData = typeof(BranchNode)},
+                new SearchTreeEntry(new GUIContent(nameof(BranchNode))) { level = 2, userData = typeof(BranchNode)},				
 
-                new SearchTreeGroupEntry(new GUIContent("Other")) { level = 1 },
+				new SearchTreeGroupEntry(new GUIContent("Other")) { level = 1 },
 
 				new SearchTreeEntry(new GUIContent(nameof(RelayNode))) { level = 2, userData = typeof(RelayNode) },
 				new SearchTreeEntry(new GUIContent(nameof(EndNode))) { level = 2, userData = typeof(EndNode) },
             };
 
+            var guiContent = new GUIContent("Animation");
+            entries.Add(new SearchTreeGroupEntry(guiContent) { level = 1 });
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.IsClass && !type.IsAbstract && type.IsSubclassOf(typeof(ConversationAnimationGenerator)))
+                    {
+                        var name = type.Name;
+                        entries.Add(new SearchTreeEntry(new GUIContent(name)) { level = 2, userData = typeof(AnimationNode<>).MakeGenericType(type)});
+                    }
+                }
+            }
 
             return entries;
         }

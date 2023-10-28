@@ -28,7 +28,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 		public void OnAddOptionButton()
 		{
 			//出力ポートを追加
-			var outputPort = Port.Create<Edge>(Orientation.Vertical, Direction.Output, Port.Capacity.Single, typeof(float));
+			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
 			outputPort.portName = $"Option {outputContainer.childCount + 1}";
 			outputContainer.Add(outputPort);
 
