@@ -98,8 +98,6 @@ namespace Prashalt.Unity.ConversationGraph.Editor
         }
         public void OnSave()
         {
-            if (ConversationGraphAsset is null || !conversationGraphView.isChanged) return;
-
             ConversationGraphAsset.ClearNodes();
             ConversationGraphAsset.ClearEdges();
 

@@ -5,6 +5,7 @@ using Prashalt.Unity.ConversationGraph.Components.Base;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.InputSystem.InputAction;
 
 namespace Prashalt.Unity.ConversationGraph.Components
 {
@@ -26,7 +27,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
         private bool isWaitClick = false;
         private new ConversationAnimation animation;
 
-        protected override void Start()
+		protected override void Start()
         {
             audioSource = GetComponent<AudioSource>();
             OnNodeChangeEvent += OnNodeChange;
@@ -35,18 +36,22 @@ namespace Prashalt.Unity.ConversationGraph.Components
             OnStartNodeEvent += OnStartNode;
 
             base.Start();
+
+#if ENABLE_INPUT_SYSTEM
+            var action = new ConversationAction();
+            action.Enable();
+            action.ClickAction.Click.performed += OnClick;
+#endif
         }
 
         private void Update()
         {
             //DIで書き直してもいいかも
 #if ENABLE_LEGACY_INPUT_MANAGER
-            if(Input.GetMouseButtonDown(0) && isStartAnimation && !isWaitClick)
+            if (Input.GetMouseButtonDown(0) && isStartAnimation && !isWaitClick)
             {
                 isSkipText = true;
             }
-#elif ENABLE_INPUT_SYSTEM
-        
 #endif
         }
         private void OnStartNode(ConversationData data)
@@ -194,5 +199,14 @@ namespace Prashalt.Unity.ConversationGraph.Components
             await UniTask.Delay(200);
             isWaitClick = false;
         }
-	}
+#if ENABLE_INPUT_SYSTEM
+        private void OnClick(CallbackContext _)
+        {
+			if (isStartAnimation && !isWaitClick)
+			{
+				isSkipText = true;
+			}
+		}
+#endif
+    }
 }

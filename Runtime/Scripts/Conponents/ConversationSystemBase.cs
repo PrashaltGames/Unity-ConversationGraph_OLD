@@ -34,7 +34,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
         private bool isLogicEnd = false;
         protected int optionId;
         protected ConversationAnimationGenerator letterAnimation;
-		protected List<ConversationData> textHistory;
+		protected List<ConversationData> textHistory = new();
 
 		private bool isFinishInit;
 
