@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using Packages.com.prashalt.unity.conversationgraph.Animation;
 using Prashalt.Unity.ConversationGraph.Animation;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using TMPro;
@@ -19,14 +20,23 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
         public Func<ConversationData, UniTask> OnShowOptionsEvent { get; set; }
         public Action OnConversationFinishedEvent { get; set; }
         public Action OnConversationStartEvent { get; set; }
-        public Action<ConversationData> OnStartNodeEvent { get; set; } 
+        public Action<ConversationData> OnStartNodeEvent { get; set; }
 
-        private bool isLogicMode = false;
+		public IReadOnlyList<ConversationData> TextHistory
+		{
+			get
+			{
+				return textHistory;
+			}
+		}
+
+		private bool isLogicMode = false;
         private bool isLogicEnd = false;
         protected int optionId;
         protected ConversationAnimationGenerator letterAnimation;
+		protected List<ConversationData> textHistory;
 
-        private bool isFinishInit;
+		private bool isFinishInit;
 
         protected virtual void Start()
         {

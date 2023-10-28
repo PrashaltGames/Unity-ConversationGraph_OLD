@@ -18,6 +18,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
         [SerializeField] private GameObject optionObjParent;
         [SerializeField] private GameObject optionPrefab;
 
+
         private AudioSource audioSource;
         private bool isOptionSelected = false;
         private bool isSkipText;
@@ -62,6 +63,9 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
 			//Update Text => MagicTween内のテキスト更新されない…
 			speaker.text = speakerName;
+
+            //履歴に追加
+            textHistory.Add(data);
 
             foreach (var text in data.textList)
             {
