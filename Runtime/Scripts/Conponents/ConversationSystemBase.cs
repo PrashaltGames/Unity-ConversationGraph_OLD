@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Packages.com.prashalt.unity.conversationgraph.Animation;
 using Prashalt.Unity.ConversationGraph.Animation;
 using System;
 using System.Reflection;
@@ -6,7 +7,7 @@ using System.Text.RegularExpressions;
 using TMPro;
 using UnityEngine;
 
-namespace Prashalt.Unity.ConversationGraph.Conponents.Base
+namespace Prashalt.Unity.ConversationGraph.Components.Base
 {
     public abstract class ConversationSystemBase : MonoBehaviour
     {
@@ -206,16 +207,50 @@ namespace Prashalt.Unity.ConversationGraph.Conponents.Base
 			}
             return text;
 		}
+
 		//ソースジェネレーターチャンス
-		protected ConversationAnimation GetAnimation(string animationName, TextMeshProUGUI text)
+		protected LetterAnimation GetLetterAnimation(AnimationData animationData, TextMeshProUGUI text)
 		{
-			var animation = animationName switch
+			var animation = animationData.animationName switch
 			{
 				nameof(LetterFadeInAnimation) => new LetterFadeInAnimation(text),
 				_ => null
 			};
 
+			SetAnimationProperty(animationData, animation);
 			return animation;
 		}
+        protected ObjectAnimation GetObjectAnimation(AnimationData animationData, Transform text)
+        {
+			var animation = animationData.animationName switch
+			{
+				nameof(ObjectShakeAnimation) => new ObjectShakeAnimation(text),
+				_ => null
+			};
+
+			SetAnimationProperty(animationData, animation);
+			return animation;
+		}
+		private void SetAnimationProperty(AnimationData animationData, ConversationAnimation animation)
+		{
+			//animationのプロパティを登録
+			var intIndex = 0;
+			var floatIndex = 0;
+
+			foreach (var info in animation.GetType().GetFields())
+			{
+				if (info.FieldType == typeof(int))
+				{
+					info.SetValue(animation, animationData.intProperties[intIndex]);
+					intIndex++;
+				}
+				else if (info.FieldType == typeof(float))
+				{
+					info.SetValue(animation, animationData.floatProperties[floatIndex]);
+					floatIndex++;
+				}
+			}
+		}
 	}
+
 }

@@ -3,14 +3,13 @@ using System;
 using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Prashalt.Unity.ConversationGraph.Nodes
 {
     [Serializable]
     public class StartNode : MasterNode
     {
-        [SerializeField] private AnimationData animation;
+		[SerializeField] private string animationGuid;
 
 		[NonSerialized] private Port animationPort;
         public StartNode()
@@ -37,10 +36,8 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 			{
 				var edge = animationPort.connections.FirstOrDefault();
 
-				var animationNode = edge.output.node as AnimationNode<LetterFadeInAnimation>;
-				animation.name = animationNode.AnimationName;
-				animation.intProperties = animationNode.intProperties;
-				animation.floatProperties = animationNode.floatProperties;
+				var animationNode = edge.output.node as MasterNode;
+				animationGuid = animationNode.guid;
 			}
 			return JsonUtility.ToJson(this);
 		}

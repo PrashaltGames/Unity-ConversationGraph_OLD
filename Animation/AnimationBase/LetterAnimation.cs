@@ -8,20 +8,20 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 {
 	public abstract class LetterAnimation : ConversationAnimation
 	{
+		protected LetterAnimation(TextMeshProUGUI textMeshPro)
+		{
+			TextMeshPro = textMeshPro;
+		}
+
 		public TextMeshProUGUI TextMeshPro { get; private set; }
 
 		private static bool isAnimationInit;
 		private static List<Tween> animations = new();
 		protected static int letterCount;
 
-		protected LetterAnimation(TextMeshProUGUI textMeshPro)
-		{
-			TextMeshPro = textMeshPro;
-		}
-
 		protected abstract Tween GenerateAnimation(int letterIndex);
 
-		public override async UniTask<List<Tween>> SetAnimation()
+		public override List<Tween> SetAnimation()
 		{	
 			//すでに同じアニメーションがあるなら削除しない。
 			if (letterCount == TextMeshPro.GetCharCount() && isAnimationInit)
@@ -43,7 +43,6 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 			for(var i = 0; i < TextMeshPro.GetCharCount(); i++)
 			{
 				animations.Add(GenerateAnimation(i));
-				await UniTask.Delay(1);
 			}
 			TextMeshPro.GetTMPTweenAnimator().Update();
 

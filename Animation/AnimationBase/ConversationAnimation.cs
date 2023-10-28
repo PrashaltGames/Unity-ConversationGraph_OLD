@@ -10,6 +10,6 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 		{
 			
 		}
-		public abstract UniTask<List<Tween>> SetAnimation();
+		public abstract List<Tween> SetAnimation();
 	}
 }

@@ -1,3 +1,4 @@
+using Packages.com.prashalt.unity.conversationgraph.Animation;
 using Prashalt.Unity.ConversationGraph.Animation;
 using Prashalt.Unity.ConversationGraph.Components;
 using Prashalt.Unity.ConversationGraph.Editor;
@@ -14,7 +15,7 @@ using UnityEngine.UIElements;
 public abstract class ConversationNode : MasterNode
 {
 	[SerializeField] protected List<string> textList;
-	[SerializeField] protected AnimationData animation;
+	[SerializeField] protected string animationGuid;
 
 	[NonSerialized] protected VisualElement selectedTextField;
 	[NonSerialized] protected VisualElement buttonContainer;
@@ -34,7 +35,7 @@ public abstract class ConversationNode : MasterNode
 		inputContainer.Add(inputPort);
 
 		// 入力用のポートを作成
-		animationPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(ConversationAnimation));
+		animationPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(ObjectAnimation));
 		animationPort.portName = "Animation";
 		animationPort.portColor = Color.red;
 		inputContainer.Add(animationPort);
@@ -86,15 +87,14 @@ public abstract class ConversationNode : MasterNode
 	}
 	public override string ToJson()
 	{
-		if(animationPort.connected)
+		base.ToJson();
+		if (animationPort.connected)
 		{
 			var edge = animationPort.connections.FirstOrDefault();
 
-			var animationNode = edge.output.node as AnimationNode<LetterFadeInAnimation>;
-			animation.name = animationNode.AnimationName;
-			animation.intProperties = animationNode.intProperties;
-			animation.floatProperties = animationNode.floatProperties;
+			var animationNode = edge.output.node as MasterNode;
+			animationGuid = animationNode.guid;
 		}
-		return JsonUtility.ToJson(animation);
+		return JsonUtility.ToJson(this);
 	}
 }

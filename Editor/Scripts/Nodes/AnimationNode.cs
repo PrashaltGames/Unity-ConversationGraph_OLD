@@ -12,20 +12,20 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 	[Serializable]
 	public class AnimationNode<T> : MasterNode where T : ConversationAnimation
 	{
-		[SerializeField] public List<int> intProperties = new();
-		[SerializeField] public List<float> floatProperties = new();
-		public string AnimationName { get; private set; }
+		[SerializeField] private List<int> intProperties = new();
+		[SerializeField] private List<float> floatProperties = new();
+		[SerializeField] private string animationName;
 		public AnimationNode()
 		{
 			title = $"{typeof(T).Name} (Animation)";
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(LetterAnimation));
+			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(T).BaseType);
 			outputPort.portName = "Output";
 			outputPort.portColor = Color.red;
 			outputContainer.Add(outputPort);
 
-			AnimationName = typeof(T).Name;		
+			animationName = typeof(T).Name;		
 		}
 		public override void Initialize(string guid, Rect rect, string json)
 		{
@@ -106,6 +106,10 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 					Debug.LogError("パッケージ開発者さんミスってますよ");
 				}
 			}
+		}
+		public override string ToJson()
+		{
+			return JsonUtility.ToJson(this);
 		}
 	}
 }
