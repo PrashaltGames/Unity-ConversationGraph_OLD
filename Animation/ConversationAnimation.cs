@@ -1,6 +1,7 @@
 using MagicTween;
 using System.Collections.Generic;
 
+//TODO: MagicTween‚ÌSequence‚Å‘‚«’¼‚·
 public class ConversationAnimation
 {
 	private List<Tween> animations = new();

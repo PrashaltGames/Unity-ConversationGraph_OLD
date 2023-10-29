@@ -66,13 +66,13 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
             {
                 return;
             }
-            await ProccesConversationAsset(conversationAsset);
+
+			OnConversationStartEvent?.Invoke();
+			await ProccesConversationAsset(conversationAsset);
         }
         private async UniTask ProccesConversationAsset(ConversationGraphAsset asset)
         {
 			isBusy = true;
-
-			OnConversationStartEvent?.Invoke();
 
 			var previousNodeData = asset.StartNode;
 			var startNodeData = JsonUtility.FromJson<ConversationData>(previousNodeData.json);
