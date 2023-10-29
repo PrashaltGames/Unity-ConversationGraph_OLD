@@ -12,12 +12,17 @@ namespace Prashalt.Unity.ConversationGraph.Components
 	[RequireComponent(typeof(AudioSource))]
     public class ConversationSystemUGUI : ConversationSystemBase
     {
+        [Header("GUI")]
+        [SerializeField] private Canvas conversationCanvas;
         [Header("GUI-Text")]
         [SerializeField] private TextMeshProUGUI mainText;
         [SerializeField] private TextMeshProUGUI speaker;
         [Header("GUI-Option")]
         [SerializeField] private GameObject optionObjParent;
         [SerializeField] private GameObject optionPrefab;
+        [Header("Other")]
+        [SerializeField] private CanvasGroup arrow;
+        [SerializeField] private float arrowAnimationSpeed;
 
 
         private AudioSource audioSource;
@@ -26,6 +31,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
         private bool isStartAnimation = false;
         private bool isWaitClick = false;
         private new ConversationAnimation animation;
+        private Tween arrowTween;
 
 		protected override void Start()
         {
@@ -33,9 +39,14 @@ namespace Prashalt.Unity.ConversationGraph.Components
             OnNodeChangeEvent += OnNodeChange;
             OnShowOptionsEvent += OnShowOptions;
             OnConversationFinishedEvent += OnConvasationFinished;
+            OnConversationStartEvent += () => conversationCanvas.gameObject.SetActive(true);
             OnStartNodeEvent += OnStartNode;
 
-            base.Start();
+            //arrowTweenを事前に作成しておく。
+			arrowTween = arrow.TweenAlpha(0, arrowAnimationSpeed).SetLoops(-1, LoopType.Yoyo).SetAutoPlay(false).SetInvert();
+			arrow.alpha = 0;
+
+			base.Start();
 
 #if ENABLE_INPUT_SYSTEM
             var action = new ConversationAction();
@@ -105,9 +116,17 @@ namespace Prashalt.Unity.ConversationGraph.Components
                 if(conversationAsset.settings.isNeedClick)
                 {
                     isWaitClick = true;
+                    arrowTween.Restart();
                     await WaitClick();
-                    DelayEnableSkip();
+
+                    //arrowTweenを止める
+                    arrowTween.Pause();
+					arrow.alpha = 0;
+					//次の文章を飛ばせるようにするのを遅延する。
+					DelayEnableSkip();
+                    //アニメーションを止める
                     animation?.Puase();
+                    mainText.transform.rotation = Quaternion.identity;
 				}
                 else
                 {
@@ -148,6 +167,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
         {
             speaker.text = "";
             mainText.text = "";
+            conversationCanvas.gameObject.SetActive(false);
         }
 		private async UniTask PlayLetterAnimation(ConversationAnimation animations)
 		{
