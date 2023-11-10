@@ -15,7 +15,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
         [Header("Data")]
         [SerializeField] protected ConversationGraphAsset conversationAsset;
 
-        public bool isBusy { get; private set; } = false;
+        public bool IsBusy { get; private set; } = false;
         public Func<ConversationData, UniTask> OnNodeChangeEvent { get; set; }
         public Func<ConversationData, UniTask> OnShowOptionsEvent { get; set; }
         public Action OnConversationFinishedEvent { get; set; }
@@ -30,10 +30,10 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
 			}
 		}
 
-		private bool isLogicMode = false;
-        private bool isLogicEnd = false;
+		private bool _isLogicMode = false;
+        private bool _isLogicEnd = false;
         protected int optionId;
-        protected ConversationAnimationGenerator letterAnimation;
+        protected Animation.ConversationAnimationGenerator letterAnimation;
 		protected List<ConversationData> textHistory = new();
 
 		private bool isFinishInit;
@@ -59,7 +59,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
         }
         public async void StartConversation()
         {
-            if (isBusy) return;
+            if (IsBusy) return;
             await UniTask.WaitUntil(() => isFinishInit);
 
             if(conversationAsset is null)
@@ -72,7 +72,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
         }
         private async UniTask ProccesConversationAsset(ConversationGraphAsset asset)
         {
-			isBusy = true;
+			IsBusy = true;
 
 			var previousNodeData = asset.StartNode;
 			var startNodeData = JsonUtility.FromJson<ConversationData>(previousNodeData.json);
@@ -87,11 +87,11 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
 					return;
 				}
 				int nodeCount = 0;
-				isLogicEnd = true;
+				_isLogicEnd = true;
 				foreach (var nodeData in nodeDataList)
 				{
 					//Logic系（Selectは例外的に含む：修正必要かも）の時はその番号のみを再生する
-					if (isLogicMode && optionId != nodeCount)
+					if (_isLogicMode && optionId != nodeCount)
 					{
 						nodeCount++;
 
@@ -114,15 +114,15 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
 						//EndNodeのとき
 						case "EndNode":
 							OnConversationFinishedEvent.Invoke();
-							isBusy = false;
+							IsBusy = false;
 							return;
 					}
 					nodeCount++;
 					previousNodeData = nodeData;
 				}
-				if (isLogicEnd)
+				if (_isLogicEnd)
 				{
-					isLogicMode = false;
+					_isLogicMode = false;
 				}
 			}
 		}
@@ -133,8 +133,8 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
 			if (nodeData.typeName.Split(".")[5] == "SelectNode")
 			{
 				await OnShowOptionsEvent.Invoke(conversationData);
-                isLogicMode = true;
-                isLogicEnd = false;
+                _isLogicMode = true;
+                _isLogicEnd = false;
 			}
 			else
 			{
@@ -170,7 +170,7 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
             {
                 optionId = 1;
 			}
-            isLogicMode = true;
+            _isLogicMode = true;
 		}
         public async UniTask OnSubGraphNode(NodeData nodeData)
         {
@@ -223,8 +223,8 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
 		{
 			var animation = animationData.animationName switch
 			{
-				nameof(LetterFadeInAnimation) => new LetterFadeInAnimation(text),
-				nameof(LetterFadeInOffsetYAnimation) => new LetterFadeInOffsetYAnimation(text),
+				nameof(LetterFadeInAnimation) => new LetterFadeInAnimation(),
+				nameof(LetterFadeInOffsetYAnimation) => new LetterFadeInOffsetYAnimation(),
 				_ => null
 			};
 
@@ -235,14 +235,14 @@ namespace Prashalt.Unity.ConversationGraph.Components.Base
         {
 			var animation = animationData.animationName switch
 			{
-				nameof(ObjectShakeAnimation) => new ObjectShakeAnimation(text),
+				nameof(ObjectShakeAnimation) => new ObjectShakeAnimation(),
 				_ => null
 			};
 
 			SetAnimationProperty(animationData, animation);
 			return animation;
 		}
-		private void SetAnimationProperty(AnimationData animationData, ConversationAnimationGenerator animation)
+		private void SetAnimationProperty(AnimationData animationData, Animation.ConversationAnimationGenerator animation)
 		{
 			//animationのプロパティを登録
 			var intIndex = 0;

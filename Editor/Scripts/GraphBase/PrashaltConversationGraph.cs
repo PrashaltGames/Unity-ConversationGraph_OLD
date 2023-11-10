@@ -82,7 +82,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 //    return false;
 
                 //ƒ|[ƒg‚ÌŒ^‚ªŒp³‚³‚ê‚Ä‚¢‚È‚¯‚ê‚ÎŒq‚°‚È‚¢
-                if(!startPort.portType.IsSubclassOf(port.portType))
+                if(!startPort.portType.IsSubclassOf(port.portType) && startPort.portType != port.portType)
                     return false;
 
                 return true;

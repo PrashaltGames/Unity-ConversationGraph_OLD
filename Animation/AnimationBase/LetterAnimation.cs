@@ -8,23 +8,16 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 {
 	public abstract class LetterAnimation : ConversationAnimationGenerator
 	{
-		protected LetterAnimation(TextMeshProUGUI textMeshPro)
-		{
-			TextMeshPro = textMeshPro;
-		}
-
-		public TextMeshProUGUI TextMeshPro { get; private set; }
-
 		private static bool isAnimationInit;
 		private static ConversationAnimation conversationAnimation = new();
 		protected static int letterCount;
 
-		protected abstract ConversationAnimation GenerateAnimation(int letterIndex);
+		protected abstract ConversationAnimation GenerateAnimation(int letterIndex, TextMeshProUGUI textMeshPro);
 
-		public override ConversationAnimation SetAnimation()
+		public override ConversationAnimation SetAnimation(TextMeshProUGUI textMeshPro)
 		{	
 			//すでに同じアニメーションがあるなら削除しない。
-			if (letterCount == TextMeshPro.GetCharCount() && isAnimationInit)
+			if (letterCount == textMeshPro.GetCharCount() && isAnimationInit)
 			{
 				return conversationAnimation;
 			}
@@ -39,12 +32,12 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 			}
 			isAnimationInit = true;
 
-			TextMeshPro.GetTMPTweenAnimator().Update();
-			for(var i = 0; i < TextMeshPro.GetCharCount(); i++)
+			textMeshPro.GetTMPTweenAnimator().Update();
+			for(var i = 0; i < textMeshPro.GetCharCount(); i++)
 			{
-				conversationAnimation.Add(GenerateAnimation(i));
+				conversationAnimation.Add(GenerateAnimation(i, textMeshPro));
 			}
-			TextMeshPro.GetTMPTweenAnimator().Update();
+			textMeshPro.GetTMPTweenAnimator().Update();
 
 			return conversationAnimation;
 		}

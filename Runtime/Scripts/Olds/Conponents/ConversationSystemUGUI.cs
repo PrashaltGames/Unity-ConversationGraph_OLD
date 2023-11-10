@@ -26,12 +26,12 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
 
         private AudioSource audioSource;
-        private bool isOptionSelected = false;
-        private bool isSkipText;
-        private bool isStartAnimation = false;
-        private bool isWaitClick = false;
-        private new ConversationAnimation animation;
-        private Tween arrowTween;
+        private bool _isOptionSelected = false;
+        private bool _isSkipText;
+        private bool _isStartAnimation = false;
+        private bool _isWaitClick = false;
+        private ConversationAnimation _animation;
+        private Tween _arrowTween;
 
 		protected override void Start()
         {
@@ -43,7 +43,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
             OnStartNodeEvent += OnStartNode;
 
             //arrowTweenを事前に作成しておく。
-			arrowTween = arrow.TweenAlpha(0, arrowAnimationSpeed).SetLoops(-1, LoopType.Yoyo).SetAutoPlay(false).SetInvert();
+			_arrowTween = arrow.TweenAlpha(0, arrowAnimationSpeed).SetLoops(-1, LoopType.Yoyo).SetAutoPlay(false).SetInvert();
 			arrow.alpha = 0;
 
 			base.Start();
@@ -59,9 +59,9 @@ namespace Prashalt.Unity.ConversationGraph.Components
         {
             //DIで書き直してもいいかも
 #if ENABLE_LEGACY_INPUT_MANAGER
-            if (Input.GetMouseButtonDown(0) && isStartAnimation && !isWaitClick)
+            if (Input.GetMouseButtonDown(0) && _isStartAnimation && !_isWaitClick)
             {
-                isSkipText = true;
+                _isSkipText = true;
             }
 #endif
         }
@@ -85,7 +85,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
             foreach (var text in data.textList)
             {
-				isSkipText = false;
+				_isSkipText = false;
 
 				var reflectPropertyText = ReflectProperty(text);
 				audioSource.Play();
@@ -106,7 +106,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
 						PlayObjectAnimation(objectAnimation);
 					}
 
-					isStartAnimation = false;
+					_isStartAnimation = false;
                 }
                 else
                 {
@@ -115,17 +115,17 @@ namespace Prashalt.Unity.ConversationGraph.Components
 
                 if(conversationAsset.settings.isNeedClick)
                 {
-                    isWaitClick = true;
-                    arrowTween.Restart();
+                    _isWaitClick = true;
+                    _arrowTween.Restart();
                     await WaitClick();
 
                     //arrowTweenを止める
-                    arrowTween.Pause();
+                    _arrowTween.Pause();
 					arrow.alpha = 0;
 					//次の文章を飛ばせるようにするのを遅延する。
 					DelayEnableSkip();
                     //アニメーションを止める
-                    animation?.Puase();
+                    _animation?.Puase();
                     mainText.transform.rotation = Quaternion.identity;
 				}
                 else
@@ -138,7 +138,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
         protected async UniTask OnShowOptions(ConversationData data)
         {
             int id = 0;
-            isOptionSelected = false;
+            _isOptionSelected = false;
             foreach(var option in data.textList)
             {
                 var gameObj = Instantiate(optionPrefab, optionObjParent.transform);
@@ -151,7 +151,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
                 gameObj.GetComponent<Button>().onClick.AddListener(() => OnSelectOptionButton(optionId));
                 id++;
             }
-            await UniTask.WaitUntil(() => isOptionSelected);
+            await UniTask.WaitUntil(() => _isOptionSelected);
         }
         protected void OnSelectOptionButton(int optionId)
         {
@@ -161,7 +161,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
             }
             this.optionId = optionId;
 
-            isOptionSelected = true;
+            _isOptionSelected = true;
         }
         protected void OnConvasationFinished()
         {
@@ -172,9 +172,9 @@ namespace Prashalt.Unity.ConversationGraph.Components
 		private async UniTask PlayLetterAnimation(ConversationAnimation animations)
 		{
             animations.Play();
-            isStartAnimation = true;
+            _isStartAnimation = true;
 
-			await UniTask.WaitUntil(() => !animations.IsPlaying || isSkipText);
+			await UniTask.WaitUntil(() => !animations.IsPlaying || _isSkipText);
 			mainText.ResetCharTweens();
 		}
         public async UniTask LetterAnimation()
@@ -182,7 +182,7 @@ namespace Prashalt.Unity.ConversationGraph.Components
 			if (letterAnimation is not null)
 			{
 				//アニメーションを今の文字列の長さで生成
-				var conversationAnimation = letterAnimation.SetAnimation();
+				var conversationAnimation = letterAnimation.SetAnimation(mainText);
 
 				//アニメーションを再生
 				await PlayLetterAnimation(conversationAnimation);
@@ -197,34 +197,34 @@ namespace Prashalt.Unity.ConversationGraph.Components
 					await UniTask.Delay(conversationAsset.settings.animationSpeed);
 
 					//クリックしてたら全部にする
-					if (isSkipText)
+					if (_isSkipText)
 					{
 						mainText.maxVisibleCharacters = mainText.text.Length;
 						break;
 					}
 					else
 					{
-						isStartAnimation = true;
+						_isStartAnimation = true;
 					}
 				}
 			}
 		}
         public void PlayObjectAnimation(ObjectAnimation objectAnimationGenerator)
         {
-            animation = objectAnimationGenerator.SetAnimation();
-            animation.Play();
+            _animation = objectAnimationGenerator.SetAnimation(mainText);
+            _animation.Play();
         }
         public async void DelayEnableSkip()
         {
             await UniTask.Delay(200);
-            isWaitClick = false;
+            _isWaitClick = false;
         }
 #if ENABLE_INPUT_SYSTEM
         private void OnClick(CallbackContext _)
         {
-			if (isStartAnimation && !isWaitClick)
+			if (_isStartAnimation && !_isWaitClick)
 			{
-				isSkipText = true;
+				_isSkipText = true;
 			}
 		}
 #endif

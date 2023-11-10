@@ -24,7 +24,7 @@ public abstract class ConversationNode : MasterNode
 
 	protected string mainText;
 
-	private Port animationPort;
+	private Port _animationPort;
 
 	public ConversationNode(string elementPath, string mainText)
 	{
@@ -35,10 +35,10 @@ public abstract class ConversationNode : MasterNode
 		inputContainer.Add(inputPort);
 
 		// 入力用のポートを作成
-		animationPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(ObjectAnimation));
-		animationPort.portName = "Animation";
-		animationPort.portColor = Color.red;
-		inputContainer.Add(animationPort);
+		_animationPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(ObjectAnimation));
+		_animationPort.portName = "Animation";
+		_animationPort.portColor = Color.red;
+		inputContainer.Add(_animationPort);
 
 		//MainContainerをテンプレートからコピー
 		var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);
@@ -88,9 +88,9 @@ public abstract class ConversationNode : MasterNode
 	public override string ToJson()
 	{
 		base.ToJson();
-		if (animationPort.connected)
+		if (_animationPort.connected)
 		{
-			var edge = animationPort.connections.FirstOrDefault();
+			var edge = _animationPort.connections.FirstOrDefault();
 
 			var animationNode = edge.output.node as MasterNode;
 			animationGuid = animationNode.guid;

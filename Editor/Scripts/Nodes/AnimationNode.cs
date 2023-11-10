@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 namespace Prashalt.Unity.ConversationGraph.Nodes
 {
 	[Serializable]
-	public class AnimationNode<T> : MasterNode where T : ConversationAnimationGenerator
+	public class AnimationNode<T> : MasterNode where T : Animation.ConversationAnimationGenerator
 	{
 		[SerializeField] private List<int> intProperties = new();
 		[SerializeField] private List<float> floatProperties = new();
@@ -37,7 +37,6 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 				intProperties = obj.intProperties;
 				floatProperties = obj.floatProperties;
 			}
-
 
 			//プロパティを指定できるように
 			var fields = typeof(T).GetFields();

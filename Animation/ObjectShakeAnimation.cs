@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using MagicTween;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace Packages.com.prashalt.unity.conversationgraph.Animation
@@ -9,14 +10,11 @@ namespace Packages.com.prashalt.unity.conversationgraph.Animation
 	{
 		public float stlength;
 		public float duration;
-		public ObjectShakeAnimation(Transform text) : base(text)
-		{
-		}
 
-		public override ConversationAnimation SetAnimation()
+		public override ConversationAnimation SetAnimation(TextMeshProUGUI textMeshPro)
 		{
 			var list = new ConversationAnimation();
-			list.Add(Text.ShakeEulerAnglesZ(stlength, duration).SetAutoKill(false));
+			list.Add(textMeshPro.transform.ShakeEulerAnglesZ(stlength, duration).SetAutoKill(false));
 			return list;
 		}
 	}

@@ -147,7 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3835592221688203633}
   - component: {fileID: 7693764569240693597}
-  - component: {fileID: 2620098656765301155}
+  - component: {fileID: 5298439601682430123}
   m_Layer: 5
   m_Name: Template
   m_TagString: Untagged
@@ -271,7 +271,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &2620098656765301155
+--- !u!114 &5298439601682430123
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -280,17 +280,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 3522903751984079786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e233d5827a20c8419767a73cee3d6ee, type: 3}
+  m_Script: {fileID: 11500000, guid: c682a35c05819184cb9ea7c5202e919d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   conversationAsset: {fileID: 0}
-  conversationCanvas: {fileID: 0}
+  conversationCanvas: {fileID: 8949797929996414365}
   mainText: {fileID: 5103198201017812819}
   speaker: {fileID: 6700968422703033072}
   optionObjParent: {fileID: 8577999385480816705}
   optionPrefab: {fileID: 8723154972811448684, guid: 20fa92f967d9b1842b6841552a270448, type: 3}
-  arrow: {fileID: 0}
-  arrowAnimationSpeed: 0
+  arrow: {fileID: 4223391735987042114}
+  arrowAnimationSpeed: 2.28
 --- !u!1 &3805336618153555642
 GameObject:
   m_ObjectHideFlags: 0
@@ -617,6 +617,7 @@ GameObject:
   - component: {fileID: 7714452838388047558}
   - component: {fileID: 4191417543575893462}
   - component: {fileID: 7808255551456257518}
+  - component: {fileID: 4223391735987042114}
   m_Layer: 5
   m_Name: Triangle
   m_TagString: Untagged
@@ -681,6 +682,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &4223391735987042114
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6261134834208793301}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7061870773688933424
 GameObject:
   m_ObjectHideFlags: 0
