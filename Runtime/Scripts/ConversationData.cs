@@ -31,4 +31,9 @@ public struct AnimationData
     public string animationName;
     public List<int> intProperties;
     public List<float> floatProperties;
+
+	public AnimationData(string animationName) : this()
+	{
+		this.animationName = animationName;
+	}
 }
