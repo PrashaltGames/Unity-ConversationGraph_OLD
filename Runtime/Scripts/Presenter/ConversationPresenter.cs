@@ -18,33 +18,35 @@ public class ConversationPresenter
 	{
 		get { return _onConversationNodeEvent; }
 	}
-	public IObservable<ConversationData> OnShowOptionsEvent
+	public IObservable<OptionData> OnAddOption
 	{
-		get { return _onShowOptionsEvent; }
+		get { return _onAddOption; }
 	}
 	public IObserver<ConversationGraphAsset> StartConversationObservable
 	{
 		get { return _startConversation; }
 	}
-	public IObserver<NodeData> SetLetterAnimationObserver
+	public IObservable<Unit> OnAnimationSkiped
 	{
-		get { return _setLetterAnimationObserver; }
+		get { return _onAnimationSkiped; }
+	}
+	public IObservable<Unit> OnSelecedOption
+	{
+		get { return _onSelectedOption; }
 	}
 	public LetterAnimation LetterAnimation { get; private set; }
-
-	private Subject<NodeData> _setLetterAnimationObserver;
 
 	//NodeProcess
 	private Subject<Unit> _onConversationFinishedEvent = new();
 	private Subject<ConversationInfoWithAnimation> _onConversationNodeEvent = new();
-	private Subject<ConversationData> _onShowOptionsEvent = new();
+	private Subject<OptionData> _onAddOption = new();
+	private Subject<Unit> _onSelectedOption = new();
 
 	private Subject<ConversationGraphAsset> _startConversation = new();
 
-	private bool _isOptionSelected = false;
-	private bool _isSkipText;
-	private bool _isStartAnimation = false;
-	private bool _isWaitClick = false;
+	//Input
+	private Subject<Unit> _onAnimationSkiped = new();
+
 	public ConversationPresenter()
 	{
 		//会話を始めるメソッドを設定
@@ -56,8 +58,9 @@ public class ConversationPresenter
 
 		//処理が終わった時のメソッドを設定
 		ConversationLogic.NodeProcess.OnConversationNodeEvent.Subscribe(info => OnChangeText(info));
-		ConversationLogic.NodeProcess.OnShowOptionsEvent.Subscribe(data => _onShowOptionsEvent.OnNext(data));
+		ConversationLogic.NodeProcess.OnShowOptionsEvent.Subscribe(data => AddOptions(data));
 		ConversationLogic.NodeProcess.OnConversationFinishedEvent.Subscribe(data => _onConversationFinishedEvent.OnNext(data));
+		ConversationLogic.ConversationInput.OnAnimationSkiped.Subscribe(_ => _onAnimationSkiped.OnNext(Unit.Default));
 
 		//_setLetterAnimationObserver.Subscribe(animationNodeData => SetLetterAnimation(animationNodeData));
 
@@ -75,6 +78,11 @@ public class ConversationPresenter
 		});
 #endif
 	}
+	public void OnSelectOption(int optionIndex)
+	{
+		ConversationLogic.ConversationInput.OnSelectOption.OnNext(optionIndex);
+		_onSelectedOption.OnNext(Unit.Default);
+	}
 #if ENABLE_INPUT_SYSTEM
 	private void OnClick(CallbackContext _)
 	{
@@ -82,23 +90,31 @@ public class ConversationPresenter
 	}
 #endif
 
-	private async void OnChangeText(ConversationInfoWithAnimationData info)
+	private void OnChangeText(in ConversationInfoWithAnimationData info)
 	{
-		Debug.Log(info.AnimationData.animationName);
 		var animation = GetObjectAnimation(info.AnimationData);
 
 		var infoWithAnimation = new ConversationInfoWithAnimation(info.ConversationInfo, animation);
 		_onConversationNodeEvent.OnNext(infoWithAnimation);
-		await ConversationLogic.ConversationInput.WaitClick();
 	}
-	private void SetLetterAnimation(AnimationData animationData)
+	private void AddOptions(in ConversationData data)
+	{
+		int id = 0;
+		foreach (var option in data.textList)
+		{
+			var optionData = new OptionData(option, id);
+			_onAddOption.OnNext(optionData);
+			id++;
+		}
+	}
+	private void SetLetterAnimation(in AnimationData animationData)
 	{
 		//アニメーションを設定
 		LetterAnimation = GetLetterAnimation(animationData);
 	}
 
 	//ソースジェネレーターチャンス
-	private LetterAnimation GetLetterAnimation(AnimationData animationData)
+	private LetterAnimation GetLetterAnimation(in AnimationData animationData)
 	{
 		var animation = animationData.animationName switch
 		{
@@ -106,22 +122,24 @@ public class ConversationPresenter
 			nameof(LetterFadeInOffsetYAnimation) => new LetterFadeInOffsetYAnimation(),
 			_ => null
 		};
+		if (animation is null) return null;
 
 		SetAnimationProperty(animationData, animation);
 		return animation;
 	}
-	protected ObjectAnimation GetObjectAnimation(AnimationData animationData)
+	protected ObjectAnimation GetObjectAnimation(in AnimationData animationData)
 	{
 		var animation = animationData.animationName switch
 		{
 			nameof(ObjectShakeAnimation) => new ObjectShakeAnimation(),
 			_ => null
 		};
+		if(animation is null) return null;
 
 		SetAnimationProperty(animationData, animation);
 		return animation;
 	}
-	private void SetAnimationProperty(AnimationData animationData, ConversationAnimationGenerator animation)
+	private void SetAnimationProperty(in AnimationData animationData, ConversationAnimationGenerator animation)
 	{
 		//animationのプロパティを登録
 		var intIndex = 0;
@@ -152,4 +170,15 @@ public class ConversationPresenter
 			Animation = animation;
 		}
 	}
+}
+public struct OptionData
+{
+	internal OptionData(string text, int optionIndex)
+	{
+		Text = text;
+		OptionIndex = optionIndex;
+	}
+
+	public string Text { get; private set; }
+	public int OptionIndex { get; private set; }
 }

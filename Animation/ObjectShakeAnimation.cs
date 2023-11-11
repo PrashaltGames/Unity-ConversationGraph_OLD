@@ -1,8 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
-using MagicTween;
-using System.Collections.Generic;
+﻿using MagicTween;
 using TMPro;
-using UnityEngine;
 
 namespace Packages.com.prashalt.unity.conversationgraph.Animation
 {
@@ -14,7 +11,7 @@ namespace Packages.com.prashalt.unity.conversationgraph.Animation
 		public override ConversationAnimation SetAnimation(TextMeshProUGUI textMeshPro)
 		{
 			var list = new ConversationAnimation();
-			list.Add(textMeshPro.transform.ShakeEulerAnglesZ(stlength, duration).SetAutoKill(false));
+			list.Add(textMeshPro.transform.ShakeEulerAnglesZ(stlength, duration).SetAutoKill(false).SetAutoPlay(false));
 			return list;
 		}
 	}

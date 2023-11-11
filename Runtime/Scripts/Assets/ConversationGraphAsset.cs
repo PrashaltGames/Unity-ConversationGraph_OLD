@@ -94,6 +94,7 @@ namespace Prashalt.Unity.ConversationGraph
         }
         public NodeData FindNode(string nodeGuid)
         {
+            if (nodeGuid is "" || nodeGuid is null) return null;
             NodeData result;
             if(nodeGuid.Contains(":"))
             {

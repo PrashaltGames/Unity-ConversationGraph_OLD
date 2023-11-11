@@ -1,8 +1,6 @@
 using Cysharp.Threading.Tasks;
 using MagicTween;
-using System.Collections.Generic;
 using TMPro;
-using UnityEngine;
 
 namespace Prashalt.Unity.ConversationGraph.Animation
 {
@@ -31,7 +29,7 @@ namespace Prashalt.Unity.ConversationGraph.Animation
 				conversationAnimation.Clear();
 			}
 			isAnimationInit = true;
-
+			
 			textMeshPro.GetTMPTweenAnimator().Update();
 			for(var i = 0; i < textMeshPro.GetCharCount(); i++)
 			{

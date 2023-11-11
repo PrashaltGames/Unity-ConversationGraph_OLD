@@ -1,4 +1,3 @@
-using Cysharp.Threading.Tasks;
 using Prashalt.Unity.ConversationGraph;
 using TMPro;
 using UnityEngine;
@@ -23,36 +22,77 @@ public class ConversationSystem : MonoBehaviour
 
 	private ConversationPresenter _conversationPresenter;
 	private Tween _arrowTween;
+
+	private ConversationAnimation _objAnimation;
 	public void Start()
 	{
 		_conversationPresenter = new();
 
 		_conversationPresenter.OnConversationNodeEvent.Subscribe(data => ChangeTextWithAnimation(data.Info, data.Animation));
+		_conversationPresenter.OnAddOption.Subscribe(data => AddOption(data));
+		_conversationPresenter.OnSelecedOption.Subscribe(_ => HideOptions());
+		_conversationPresenter.OnConversationFinishedEvent.Subscribe(_ => EndConversation());
+
+		_conversationPresenter.OnAnimationSkiped.Subscribe(_ => SkipAnimation());
+		_conversationPresenter.OnAnimationSkiped.Subscribe(_ => StartObjectAnimation());
 
 		//arrowTweenを事前に作成しておく。
 		_arrowTween = arrow.TweenAlpha(0, arrowAnimationSpeed).SetLoops(-1, LoopType.Yoyo).SetAutoPlay(false).SetInvert();
 		arrow.alpha = 0;
 	}
-	public void ChangeTextWithAnimation(ConversationInfo info, ConversationAnimationGenerator animationGenerator)
+	public void ChangeTextWithAnimation(in ConversationInfo info, in ConversationAnimationGenerator animationGenerator)
 	{
+		//その前のアニメーションを止める
+		_objAnimation?.Puase();
+		mainText.transform.rotation = Quaternion.identity;
+
+		//矢印もリセット
+		_arrowTween.Pause();
+		arrow.alpha = 0;
+
 		speaker.SetText(info.SpeakerName);
 		mainText.SetText(info.Text);
 
 		mainText.ForceMeshUpdate();
 
 		var letterAnimation = _conversationPresenter.LetterAnimation.SetAnimation(mainText);
-		letterAnimation.Play();
+		letterAnimation?.Play();
 
-		var animation = animationGenerator.SetAnimation(mainText);
-		animation.Play();
+		_objAnimation = animationGenerator?.SetAnimation(mainText);
 	}
-	public void AddOption(int optionIndex, string text)
+	private void HideOptions()
 	{
-
+		optionObjParent.gameObject.SetActive(false);
 	}
-	public void StartConversation(ConversationGraphAsset conversationAsset)
+	public void StartObjectAnimation()
+	{
+		_objAnimation?.Play();
+	}
+	public void SkipAnimation()
+	{
+		_arrowTween.Restart();
+		mainText.ResetCharTweens();
+	}
+	public void AddOption(OptionData data)
+	{
+		//TODO: オブジェクトプール？
+		var gameObj = Instantiate(optionPrefab, optionObjParent.transform);
+
+		gameObj.GetComponentInChildren<TextMeshProUGUI>().text = data.Text;
+
+		gameObj.GetComponent<Button>().onClick.AddListener(() => _conversationPresenter.OnSelectOption(data.OptionIndex));
+	}
+	public void StartConversation(in ConversationGraphAsset conversationAsset)
 	{
 		conversationCanvas.gameObject.SetActive(true);
 		_conversationPresenter.StartConversationObservable.OnNext(conversationAsset);
+	}
+	private void EndConversation()
+	{
+		conversationCanvas.gameObject.SetActive(false);
+		foreach(Transform child in optionObjParent.transform)
+		{
+			Destroy(child.gameObject);
+		}
 	}
 }

@@ -30,15 +30,14 @@ public class NodeProcess
 	}
 
 	public bool IsBusy { get; private set; }
-	private bool _isLogicMode = false;
-	private bool _isLogicEnd = false;
 	private ConversationGraphAsset asset;
 	private NodeData previousNodeData;
-	protected int optionId;
+	internal int optionId;
 
 	private Subject<ConversationGraphAsset> _startConversation = new();
 	private Subject<AnimationData> _generateLetterAnimation = new();
 	private Subject<Unit> _onConversationFinishedEvent = new();
+	private Subject<Unit> _onAnimationFinished = new();
 	private Subject<ConversationInfoWithAnimationData> _onConversationNodeEvent = new();
 	private Subject<ConversationData> _onShowOptionsEvent = new();
 
@@ -57,9 +56,6 @@ public class NodeProcess
 
 		//スタート
 		ProccesNodeList();
-
-		//TODO: ENDのやつ。
-		_onConversationFinishedEvent.OnNext(Unit.Default);
 	}
 	internal void OnNextNode()
 	{
@@ -68,7 +64,6 @@ public class NodeProcess
 	private void ProccesNodeList()
 	{
 		var nodeDataList = asset.GetNextNode(previousNodeData);
-		Debug.Log("ProcessNodeList");
 		if (nodeDataList.Count <= 0)
 		{
 			Debug.LogError("次のノードが取得できませんでした。");
@@ -91,19 +86,19 @@ public class NodeProcess
 				Debug.LogError("Error");
 				break;
 			case NodeType.End:
-				return;
+				_onConversationFinishedEvent.OnNext(Unit.Default);
+				break;
 		}
 	}
-	private (NodeData, NodeType) GetNodeFromLogicNode(List<NodeData> nodeDataList)
+	private (NodeData, NodeType) GetNodeFromLogicNode(in List<NodeData> nodeDataList)
 	{
 		int nodeCount = 0;
-		_isLogicEnd = true;
 		NodeData node = null;
 		NodeType nodeType = NodeType.Error;
 		foreach (var nodeData in nodeDataList)
 		{
 			//Logic系（Selectは例外的に含む：修正必要かも）の時はその番号のみを再生する
-			if (_isLogicMode && optionId != nodeCount)
+			if (optionId != nodeCount)
 			{
 				nodeCount++;
 				continue;
@@ -114,13 +109,10 @@ public class NodeProcess
 			nodeCount++;
 			node = nodeData;
 		}
-		if (_isLogicEnd)
-		{
-			_isLogicMode = false;
-		}
+		optionId = 0;
 		return (node, nodeType);
 	}
-	private NodeType GetNodeType(NodeData nodeData)
+	private NodeType GetNodeType(in NodeData nodeData)
 	{
 		var typeName = nodeData.typeName.Split(".")[4];
 		//ノードを分析
@@ -138,7 +130,7 @@ public class NodeProcess
 		}
 		return NodeType.Error;
 	}
-	private void OnStartNode(ConversationGraphAsset asset)
+	private void OnStartNode(in ConversationGraphAsset asset)
 	{
 		var previousNodeData = asset.StartNode;
 		var startNodeData = JsonUtility.FromJson<ConversationData>(previousNodeData.json);
@@ -148,25 +140,32 @@ public class NodeProcess
 		var animationData = JsonUtility.FromJson<AnimationData>(animationNodeData.json);
 		_generateLetterAnimation.OnNext(animationData);
 	}
-	private void OnConversationNode(NodeData nodeData)
+	private void OnConversationNode(in NodeData nodeData)
 	{
 		var conversationData = JsonUtility.FromJson<ConversationData>(nodeData.json);
-
 		if (nodeData.typeName.Split(".")[5] == "SelectNode")
 		{
-			Debug.Log("Select");
+			ConversationLogic.ConversationInput.State.Value = ConversationState.WaitSelect;
+			Debug.Log(ConversationLogic.ConversationInput.State.Value);
 			_onShowOptionsEvent.OnNext(conversationData);
-			_isLogicMode = true;
-			_isLogicEnd = false;
 		}
 		else
 		{
+			ConversationLogic.ConversationInput.State.Value = ConversationState.LetterAnimation;
 			//スピーカーネームを設定
 			var speakerName = ReflectProperty(conversationData.speakerName);
 
 			//アニメーション名を設定
 			var animationNodeData = asset.FindNode(conversationData.animationGuid);
-			var animationData = JsonUtility.FromJson<AnimationData>(animationNodeData.json);
+			AnimationData animationData;
+			if (animationNodeData is not null)
+			{
+				animationData = JsonUtility.FromJson<AnimationData>(animationNodeData.json);
+			}
+			else
+			{
+				animationData = new("None");
+			}
 
 			foreach (var text in conversationData.textList)
 			{
@@ -205,7 +204,6 @@ public class NodeProcess
 		{
 			optionId = 1;
 		}
-		_isLogicMode = true;
 	}
 	private void OnSubGraphNode(NodeData nodeData)
 	{
