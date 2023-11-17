@@ -33,14 +33,14 @@ public class ConversationSystem : MonoBehaviour
 		_conversationPresenter.OnSelecedOption.Subscribe(_ => HideOptions());
 		_conversationPresenter.OnConversationFinishedEvent.Subscribe(_ => EndConversation());
 
-		_conversationPresenter.OnAnimationSkiped.Subscribe(_ => SkipAnimation());
-		_conversationPresenter.OnAnimationSkiped.Subscribe(_ => StartObjectAnimation());
+		_conversationPresenter.OnAnimationSkipped.Subscribe(_ => SkipAnimation());
+		_conversationPresenter.OnAnimationSkipped.Subscribe(_ => StartObjectAnimation());
 
 		//arrowTweenを事前に作成しておく。
 		_arrowTween = arrow.TweenAlpha(0, arrowAnimationSpeed).SetLoops(-1, LoopType.Yoyo).SetAutoPlay(false).SetInvert();
 		arrow.alpha = 0;
 	}
-	public void ChangeTextWithAnimation(in ConversationInfo info, in ConversationAnimationGenerator animationGenerator)
+	private void ChangeTextWithAnimation(in ConversationInfo info, in ConversationAnimationGenerator animationGenerator)
 	{
 		//その前のアニメーションを止める
 		_objAnimation?.Puase();
@@ -62,18 +62,18 @@ public class ConversationSystem : MonoBehaviour
 	}
 	private void HideOptions()
 	{
-		optionObjParent.gameObject.SetActive(false);
+		optionObjParent.SetActive(false);
 	}
-	public void StartObjectAnimation()
+	private void StartObjectAnimation()
 	{
 		_objAnimation?.Play();
 	}
-	public void SkipAnimation()
+	private void SkipAnimation()
 	{
 		_arrowTween.Restart();
 		mainText.ResetCharTweens();
 	}
-	public void AddOption(OptionData data)
+	private void AddOption(OptionData data)
 	{
 		//TODO: オブジェクトプール？
 		var gameObj = Instantiate(optionPrefab, optionObjParent.transform);

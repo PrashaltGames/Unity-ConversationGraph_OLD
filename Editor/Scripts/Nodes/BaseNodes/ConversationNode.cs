@@ -1,4 +1,3 @@
-using Packages.com.prashalt.unity.conversationgraph.Animation;
 using Prashalt.Unity.ConversationGraph.Animation;
 using Prashalt.Unity.ConversationGraph.Components;
 using Prashalt.Unity.ConversationGraph.Editor;

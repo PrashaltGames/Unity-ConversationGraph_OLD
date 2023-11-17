@@ -1,6 +1,5 @@
-﻿using Prashalt.Unity.ConversationGraph.Animation;
-
-namespace Packages.com.prashalt.unity.conversationgraph.Animation
+﻿
+namespace Prashalt.Unity.ConversationGraph.Animation
 {
 	public abstract class ObjectAnimation : ConversationAnimationGenerator
 	{
