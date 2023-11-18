@@ -56,7 +56,7 @@ namespace Prashalt.Unity.ConversationGraph.Editor
                 ShowNodesFromAsset(_window.ConversationGraphAsset);
                 ShowEdgeFromAsset(_window.ConversationGraphAsset);
             }
-            var graphInspector = new GraphInspectorNode(_window.ConversationGraphAsset, this);
+            var graphInspector = new GraphInspectorNode(this);
             AddElement(graphInspector);
 
             //グラフビューの変更を検知する

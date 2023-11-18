@@ -1,8 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
-    <ui:VisualElement>
-        <ui:Toggle label="Need Click" name="needClick" />
-        <uie:IntegerField label="Switching Delay (msec)" value="42" name="timeToWait" style="margin-left: 20px;" />
-        <ui:Toggle label="Text Animation" name="textAnimation" />
-        <uie:IntegerField label="Animation Delay (msec)" value="42" name="animationSpeed" style="margin-left: 20px;" />
-    </ui:VisualElement>
-</ui:UXML>

@@ -101,24 +101,20 @@ namespace Prashalt.Unity.ConversationGraph.Editor
             ConversationGraphAsset.ClearNodes();
             ConversationGraphAsset.ClearEdges();
 
+            var isShowedWarning = false;
             foreach (var node in conversationGraphView.nodes)
             {
-                if(CheckPortEmpty(node.inputContainer.Children().Select(x => x as Port)) || 
+                if((CheckPortEmpty(node.inputContainer.Children().Select(x => x as Port)) || 
                    CheckPortEmpty(node.outputContainer.Children().Select(x => x as Port)))
+                   && !isShowedWarning)
                 {
                     Debug.LogWarning("ConversationGraph : There are Empty Port!");
+                    isShowedWarning = true;
                 }
                 if (node is MasterNode masterNode)
                 {
                     var nodeData = ConversationGraphEditorUtility.NodeToData(masterNode);
                     ConversationGraphAsset.SaveNode(nodeData);
-                }
-                else if(node is GraphInspectorNode graphInspector)
-                {
-                    ConversationGraphAsset.settings.isNeedClick = graphInspector.isNeedClick;
-                    ConversationGraphAsset.settings.shouldTextAnimation = graphInspector.shouldTextAnimation;
-                    ConversationGraphAsset.settings.switchingSpeed = graphInspector.switchingSpeed;
-                    ConversationGraphAsset.settings.animationSpeed = graphInspector.animationSpeed;
                 }
             }
 
