@@ -29,15 +29,10 @@ public abstract class ConversationNode : MasterNode
 	{
 		this.mainText = mainText;
 		// 入力用のポートを作成
-		var inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(float));
-		inputPort.portName = "Input";
-		inputContainer.Add(inputPort);
+		AddInputPort(typeof(float), "Input", Port.Capacity.Multi);
 
 		// 入力用のポートを作成
-		_animationPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(ObjectAnimation));
-		_animationPort.portName = "Animation";
-		_animationPort.portColor = Color.red;
-		inputContainer.Add(_animationPort);
+		_animationPort = AddInputPort(typeof(ObjectAnimation) ,Color.red, "Animation");
 
 		//MainContainerをテンプレートからコピー
 		var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(elementPath);

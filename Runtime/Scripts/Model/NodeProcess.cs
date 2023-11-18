@@ -137,6 +137,7 @@ public class NodeProcess
 
 		//StartNodeからアニメーションをPresenter層で取得。
 		var animationNodeData = asset.FindNode(startNodeData.animationGuid);
+		if(animationNodeData is null) return;
 		var animationData = JsonUtility.FromJson<AnimationData>(animationNodeData.json);
 		_generateLetterAnimation.OnNext(animationData);
 	}

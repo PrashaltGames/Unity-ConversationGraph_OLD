@@ -14,14 +14,13 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 		//private int clickCount;
 		public SubGraphNode()
 		{
-			var inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(float));
-			inputPort.portName = "Input";
-			inputContainer.Add(inputPort);
+			AddInputPort(typeof(float));
 
 			// 出力用のポートを作る
 			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
 			outputPort.portName = "Output";
 			outputContainer.Add(outputPort);
+			AddOutputPort(typeof(float));
 
 			//RegisterCallback<ClickEvent>(DoubleClick);
 		}

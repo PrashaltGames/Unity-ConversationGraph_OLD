@@ -22,10 +22,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
             outputContainer.Add(outputPort); // 出力用ポートはoutputContainerに追加する
 
 			// 入力用のポートを作成
-			animationPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(LetterAnimation));
-			animationPort.portName = "Letters Animation";
-			animationPort.portColor = Color.red;
-			inputContainer.Add(animationPort);
+			animationPort = AddInputPort(typeof(LetterAnimation), Color.red, "Letters Animation");
 
 			capabilities &= ~Capabilities.Deletable;
 		}

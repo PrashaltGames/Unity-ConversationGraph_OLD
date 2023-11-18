@@ -55,7 +55,7 @@ public class ConversationSystem : MonoBehaviour
 
 		mainText.ForceMeshUpdate();
 
-		var letterAnimation = _conversationPresenter.LetterAnimation.SetAnimation(mainText);
+		var letterAnimation = _conversationPresenter.LetterAnimation?.SetAnimation(mainText);
 		letterAnimation?.Play();
 
 		_objAnimation = animationGenerator?.SetAnimation(mainText);

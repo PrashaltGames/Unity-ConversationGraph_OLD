@@ -12,14 +12,10 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 			title = "Relay";
 
 			// 入力用のポートを作成
-			var inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float));
-			inputPort.portName = "Input";
-			inputContainer.Add(inputPort);
+			AddInputPort(typeof(float));
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-			outputPort.portName = "Option1";
-			outputContainer.Add(outputPort);
+			AddInputPort(typeof(float));
 		}
 	}
 }

@@ -19,9 +19,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             title = "Narrator";
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-			outputPort.portName = "Output";
-			outputContainer.Add(outputPort);
+            AddOutputPort(typeof(float));
 
             var addTextFieldButton = mainContainer.Q<Button>("addButton");
             addTextFieldButton.clicked += OnAddTextButton;
