@@ -2,19 +2,19 @@ using UniRx;
 using Prashalt.Unity.ConversationGraph;
 using System;
 using static UnityEngine.InputSystem.InputAction;
-using UnityEngine;
 using Prashalt.Unity.ConversationGraph.Animation;
-using Packages.com.prashalt.unity.conversationgraph.Animation;
+using Prashalt.Unity.ConversationGraph.Animation.Letter;
 
 public class ConversationPresenter
 {
 	public ReactiveProperty<ConversationGraphAsset> asset;
 
 	public IObservable<Unit> OnConversationFinishedEvent
-	{
-		get { return _onConversationFinishedEvent; }
-	}
-	public IObservable<ConversationInfoWithAnimation> OnConversationNodeEvent
+    {
+        get { return _onConversationFinishedEvent; }
+    }
+
+    public IObservable<ConversationInfoWithAnimation> OnConversationNodeEvent
 	{
 		get { return _onConversationNodeEvent; }
 	}
@@ -26,9 +26,9 @@ public class ConversationPresenter
 	{
 		get { return _startConversation; }
 	}
-	public IObservable<Unit> OnAnimationSkiped
+	public IObservable<Unit> OnAnimationSkipped
 	{
-		get { return _onAnimationSkiped; }
+		get { return _onAnimationSkipped; }
 	}
 	public IObservable<Unit> OnSelecedOption
 	{
@@ -45,7 +45,7 @@ public class ConversationPresenter
 	private Subject<ConversationGraphAsset> _startConversation = new();
 
 	//Input
-	private Subject<Unit> _onAnimationSkiped = new();
+	private Subject<Unit> _onAnimationSkipped = new();
 
 	public ConversationPresenter()
 	{
@@ -60,7 +60,7 @@ public class ConversationPresenter
 		ConversationLogic.NodeProcess.OnConversationNodeEvent.Subscribe(info => OnChangeText(info));
 		ConversationLogic.NodeProcess.OnShowOptionsEvent.Subscribe(data => AddOptions(data));
 		ConversationLogic.NodeProcess.OnConversationFinishedEvent.Subscribe(data => _onConversationFinishedEvent.OnNext(data));
-		ConversationLogic.ConversationInput.OnAnimationSkiped.Subscribe(_ => _onAnimationSkiped.OnNext(Unit.Default));
+		ConversationLogic.ConversationInput.OnAnimationSkiped.Subscribe(_ => _onAnimationSkipped.OnNext(Unit.Default));
 
 		//_setLetterAnimationObserver.Subscribe(animationNodeData => SetLetterAnimation(animationNodeData));
 
@@ -89,10 +89,9 @@ public class ConversationPresenter
 		ConversationLogic.ConversationInput.OnClickObserevr.OnNext(Unit.Default);
 	}
 #endif
-
 	private void OnChangeText(in ConversationInfoWithAnimationData info)
 	{
-		var animation = GetObjectAnimation(info.AnimationData);
+		var animation = AnimationUtility.GetObjectAnimation(info.AnimationData);
 
 		var infoWithAnimation = new ConversationInfoWithAnimation(info.ConversationInfo, animation);
 		_onConversationNodeEvent.OnNext(infoWithAnimation);
@@ -110,54 +109,7 @@ public class ConversationPresenter
 	private void SetLetterAnimation(in AnimationData animationData)
 	{
 		//アニメーションを設定
-		LetterAnimation = GetLetterAnimation(animationData);
-	}
-
-	//ソースジェネレーターチャンス
-	private LetterAnimation GetLetterAnimation(in AnimationData animationData)
-	{
-		var animation = animationData.animationName switch
-		{
-			nameof(LetterFadeInAnimation) => new LetterFadeInAnimation(),
-			nameof(LetterFadeInOffsetYAnimation) => new LetterFadeInOffsetYAnimation(),
-			_ => null
-		};
-		if (animation is null) return null;
-
-		SetAnimationProperty(animationData, animation);
-		return animation;
-	}
-	protected ObjectAnimation GetObjectAnimation(in AnimationData animationData)
-	{
-		var animation = animationData.animationName switch
-		{
-			nameof(ObjectShakeAnimation) => new ObjectShakeAnimation(),
-			_ => null
-		};
-		if(animation is null) return null;
-
-		SetAnimationProperty(animationData, animation);
-		return animation;
-	}
-	private void SetAnimationProperty(in AnimationData animationData, ConversationAnimationGenerator animation)
-	{
-		//animationのプロパティを登録
-		var intIndex = 0;
-		var floatIndex = 0;
-
-		foreach (var info in animation.GetType().GetFields())
-		{
-			if (info.FieldType == typeof(int))
-			{
-				info.SetValue(animation, animationData.intProperties[intIndex]);
-				intIndex++;
-			}
-			else if (info.FieldType == typeof(float))
-			{
-				info.SetValue(animation, animationData.floatProperties[floatIndex]);
-				floatIndex++;
-			}
-		}
+		LetterAnimation = AnimationUtility.GetLetterAnimation(animationData);
 	}
 	public struct ConversationInfoWithAnimation
 	{

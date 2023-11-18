@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.Graphs;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -20,10 +21,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes
 			title = $"{typeof(T).Name} (Animation)";
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(T));
-			outputPort.portName = "Output";
-			outputPort.portColor = Color.red;
-			outputContainer.Add(outputPort);
+			AddOutputPort(typeof(T), Color.red);
 
 			animationName = typeof(T).Name;		
 		}

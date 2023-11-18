@@ -1,7 +1,8 @@
 ﻿using MagicTween;
+using Prashalt.Unity.ConversationGraph.Animation.Letter;
 using TMPro;
 
-namespace Packages.com.prashalt.unity.conversationgraph.Animation
+namespace Prashalt.Unity.ConversationGraph.Animation.Object
 {
 	public class ObjectShakeAnimation : ObjectAnimation
 	{

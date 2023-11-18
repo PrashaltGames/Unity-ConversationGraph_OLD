@@ -14,10 +14,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Property
 			title = $"(bool)";
 
 			// 出力用のポートを作る
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
-			outputPort.portName = "Flag";
-			outputPort.portColor = Color.magenta;
-			outputContainer.Add(outputPort); // 出力用ポートはoutputContainerに追加する
+			AddOutputPort(typeof(bool), Color.magenta, "Flag");
 		}
 		public override void Initialize(string guid, Rect rect, string json)
 		{

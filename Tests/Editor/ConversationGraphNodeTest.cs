@@ -1,11 +1,8 @@
 using NUnit.Framework;
-using Prashalt.Unity.ConversationGraph.Animation;
 using Prashalt.Unity.ConversationGraph.Nodes;
 using Prashalt.Unity.ConversationGraph.Nodes.Conversation;
 using System.Collections;
-using System.Security.Cryptography;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.VersionControl;
+using Prashalt.Unity.ConversationGraph.Animation.Letter;
 using UnityEngine;
 using UnityEngine.TestTools;
 

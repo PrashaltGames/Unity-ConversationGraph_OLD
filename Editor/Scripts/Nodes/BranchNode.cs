@@ -12,23 +12,12 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Logic
 			title = "Branch";
 
 			// 入力用のポートを作成
-			var inputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(float)); // 第三引数をPort.Capacity.Multipleにすると複数のポートへの接続が可能になる
-			inputPort.portName = "Input";
-			inputContainer.Add(inputPort); // 入力用ポートはinputContainerに追加する
-
-			var boolPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Input, Port.Capacity.Single, typeof(bool)); // 第三引数をPort.Capacity.Multipleにすると複数のポートへの接続が可能になる
-			boolPort.portName = "Bool";
-			boolPort.portColor = Color.magenta;
-			inputContainer.Add(boolPort); // 入力用ポートはinputContainerに追加する
+			AddInputPort(typeof(float));
+			AddInputPort(typeof(bool), Color.magenta);
 
 			//出力ポート
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-			outputPort.portName = "True";
-			outputContainer.Add(outputPort);
-
-			var outputPort1 = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-			outputPort1.portName = "False";
-			outputContainer.Add(outputPort1);
+			AddOutputPort(typeof(float), "True");
+			AddOutputPort(typeof(float), "False");
 		}
 		public override string ToJson()
 		{

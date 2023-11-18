@@ -16,9 +16,7 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
             title = "Select";
 
             //出力ポート
-            var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-            outputPort.portName = "Option 1";
-            outputContainer.Add(outputPort);
+            AddOutputPort(typeof(float), "Option 1");
 
             var addOptionButton = mainContainer.Q<Button>("addButton");
             addOptionButton.clicked += OnAddOptionButton;
@@ -28,10 +26,8 @@ namespace Prashalt.Unity.ConversationGraph.Nodes.Conversation
 		public void OnAddOptionButton()
 		{
 			//出力ポートを追加
-			var outputPort = Port.Create<Edge>(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(float));
-			outputPort.portName = $"Option {outputContainer.childCount + 1}";
-			outputContainer.Add(outputPort);
-
+            AddOutputPort(typeof(float), $"Option {outputContainer.childCount + 1}");
+            
 			//入力欄を追加
 			var textField = new PrashaltTextFieldButton();
 			textField.Q<Label>().text = $"Option Text {outputContainer.childCount}";

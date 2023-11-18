@@ -2,7 +2,7 @@ using MagicTween;
 using TMPro;
 
 
-namespace Prashalt.Unity.ConversationGraph.Animation
+namespace Prashalt.Unity.ConversationGraph.Animation.Letter
 { 
 	public class LetterFadeInAnimation : LetterAnimation
 	{
